@@ -1,38 +1,35 @@
-@extends('layouts.adminapprover')
-@section('title', 'Approver')
+@extends('layouts.user')
+@section('title', 'Perjalanan Dinas')
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<div class="container-xxl flex-grow-1 container-p-y">
-    <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12 mb-4 order-0">
-            <div class="card">
-                <div class="card-body">
-                    {{-- <button id="addJabatan" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">
-                        Tambah Karyawan
-                    </button> --}}
-                    <h5 class="mb-0 mb-3">Data Perjalanan Dinas</h5>
-                    <div class="table-responsive" style="overflow-x: auto;">
-                        <table id="approverTable" class="table table-striped table-bordered w-100">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>User</th>
-                                    <th>Project</th>
-                                    <th>Status</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                        </table>
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 mb-4 order-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="mb-0 mb-3">Data Sudah Realisasi</h5>
+                        <div class="table-responsive" style="overflow-x: auto;">
+                            <table id="perdiTable" class="table table-striped table-bordered w-100">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Project</th>
+                                        <th>Keperluan</th>
+                                        <th>Lokasi Kerja</th>
+                                        <th>Status Approve</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-
-<!-- Modal Tambah/Edit -->
-<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <!-- Modal Tambah/Edit -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -40,7 +37,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="approverid">
+                    <input type="hidden" id="perdinid">
 
                     <div class="row">
                         <!-- Kolom Kiri -->
@@ -119,56 +116,66 @@
                         <div id="category-list" class="form-check mt-2"></div>
                     </div>
                     <hr class="mt-3">
-                    <div class="mb-2">
-                        <label class="form-label">Pilih Peserta Perjalan Dinas:</label>
-                        <select name="user_id[]" id="user_id" class="form-select" multiple></select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label">Pilih Peserta Perjalan Dinas:</label>
+                                <select name="user_id[]" id="user_id" class="form-select" multiple></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label">Pilih Penanggung Jawab:</label>
+                                <select name="userpj_id[]" id="userpj_id" class="form-select" multiple></select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label">Pilih Penanggung Jawab:</label>
-                        <select name="userpj_id[]" id="userpj_id" class="form-select" multiple></select>
-                    </div>
-                    <hr class="mt3">
-                    <div class="mb-2">
-                        <label class="form-label">Transportasi</label>
+                    {{-- <hr class="mt3"> --}}
+                    {{-- <div class="mb-2">
                         <div id="transportasi-container">
                             <div class="transportasi-item row">
                                 <div class="col-md-6">
-                                    <input type="text" name="transportasi[deskripsi][]" class="form-control mb-2"
-                                        placeholder="Deskripsi">
-                                    <input type="number" name="transportasi[biaya][]" class="form-control mb-2"
-                                        placeholder="Biaya">
-                                    <input type="number" name="transportasi[qty][]" class="form-control mb-2"
-                                        placeholder="Qty">
+                                    <label for="deskripsi" class="form-label">Deskripsi</label>
+                                    <input type="text" name="transportasi[deskripsi][]" class="form-control mb-2" placeholder="Deskripsi" id="deskripsi">
+                                    
+                                    <label for="biaya" class="form-label">Biaya</label>
+                                    <input type="number" name="transportasi[biaya][]" class="form-control mb-2" placeholder="Biaya" id="biaya">
+                                    
+                                    <label for="qty" class="form-label">Qty</label>
+                                    <input type="number" name="transportasi[qty][]" class="form-control mb-2" placeholder="Qty" id="qty">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="number" name="transportasi[total][]" class="form-control mb-2"
-                                        placeholder="Total" readonly>
-                                    <textarea name="transportasi[keterangan][]" class="form-control mb-2" placeholder="Keterangan"></textarea>
+                                    <label for="total" class="form-label">Total</label>
+                                    <input type="number" name="transportasi[total][]" class="form-control mb-2" placeholder="Total" readonly id="total">
+                                    
+                                    <label for="keterangan" class="form-label">Keterangan</label>
+                                    <textarea name="transportasi[keterangan][]" class="form-control mb-2" placeholder="Keterangan" id="keterangan"></textarea>
+                                    
                                     <input type="hidden" name="transportasi[jenis_perjalanan][]" value="1">
                                 </div>
                             </div>
                         </div>
-                        <button type="button" id="addTransportasi" class="btn btn-primary mt-3">Tambah
-                            Transportasi</button>
+                        <button type="button" id="addTransportasi" class="btn btn-primary mt-3">Tambah Transportasi</button>
                     </div>
-
-                    <!-- Akomodasi Form -->
                     <div class="mb-2">
-                        <label class="form-label">Akomodasi</label>
                         <div id="akomodasi-container">
-                            <!-- Item awal akomodasi (tanpa tombol X) -->
                             <div class="akomodasi-item row">
                                 <div class="col-md-6">
+                                    <label for="deskripsi" class="form-label">Deskripsi</label>
                                     <input type="text" name="akomodasi[deskripsi][]" class="form-control mb-2"
                                         placeholder="Deskripsi">
+                                    <label for="biaya" class="form-label">Biaya</label>
                                     <input type="number" name="akomodasi[biaya][]" class="form-control mb-2"
                                         placeholder="Biaya">
+                                    <label for="qty" class="form-label">Qty</label>
                                     <input type="number" name="akomodasi[qty][]" class="form-control mb-2"
                                         placeholder="Qty">
                                 </div>
                                 <div class="col-md-6">
+                                    <label for="total" class="form-label">Total</label>
                                     <input type="number" name="akomodasi[total][]" class="form-control mb-2"
                                         placeholder="Total" readonly>
+                                    <label for="keterangan" class="form-label">Keterangan</label>
                                     <textarea name="akomodasi[keterangan][]" class="form-control mb-2" placeholder="Keterangan"></textarea>
                                     <input type="hidden" name="akomodasi[jenis_perjalanan][]" value="0">
                                     <!-- Status Akomodasi -->
@@ -176,68 +183,46 @@
                             </div>
                         </div>
                         <button type="button" id="addAkomodasi" class="btn btn-primary mt-3">Tambah Akomodasi</button>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="modal-footer">
-                    <button id="tolakrequest" statusapprove="1" class="btn btn-danger" data-id="" data-bs-toggle="modal" data-bs-target="#komentar">Ditolak</button>
-                    <button id="saveUser" statusapprove="1" class="btn btn-success">Disetujui</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button id="saveUser" class="btn btn-success">Simpan</button>
                 </div>
             </div>
         </div>
     </div>
 
-<!-- Modal Hapus -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus user ini?</p>
-                <input type="hidden" id="deletejabatanid">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button id="confirmDelete" class="btn btn-danger">Hapus</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-{{-- Modal konfirmasi tolak --}}
-<div class="modal fade" id="komentar" tabindex="-1" aria-labelledby="komentarLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="komentarLabel">Alasan Penolakan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="travelrequestid">
-                <div class="mb-2">
-                    <textarea id="komentarText" class="form-control" placeholder="Masukkan alasan penolakan"></textarea>
+    <!-- Modal Hapus -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus user ini?</p>
+                    <input type="hidden" id="deleteperdinid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button id="confirmDelete" class="btn btn-danger">Hapus</button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button id="saveTravel" class="btn btn-danger">Tolak</button>
-            </div>
         </div>
     </div>
-</div>
-
-
 @endsection
 
 @section('script')
-<script>
-    var routes = {
-        approverData: "{{ route('approver.data') }}",
-        approverCategory: "{{ route('approver.getcategoryproduct') }}",
-        approverUserPJ: "{{ route('approver.userpj') }}"
-    }
-</script>
-<script src="{{ asset('js/approver.js') }}"></script>
+    <script>
+        var routes = {
+        historyrealisasiData: "{{ route('historyrealisasi.data') }}",
+        perdinDataUser: "{{ route('perdin.datauser') }}",
+        perdinCategory: "{{ route('perdin.getcategoryproduct') }}",
+        perdinUserPJ: "{{ route('perdin.userpj') }}"
+    };
+    </script>
+    <script src="{{ asset('js/historyrealisasi.js') }}"></script>
 @endsection

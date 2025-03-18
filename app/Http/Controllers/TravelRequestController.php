@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exports\KasbonExport;
 use App\Models\Categoryproduct;
 use App\Models\Travelcategory;
 use App\Models\TravelExpense;
@@ -9,6 +10,7 @@ use App\Models\TravelPenanggungjawab;
 use App\Models\TravelRealisasi;
 use App\Models\User;
 use App\Models\TravelRequest;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Karyawan;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -81,8 +83,6 @@ class TravelRequestController extends Controller
                 ->make(true);
         }
     }
-
-
     public function getUser()
     {
         $userId = session('user_id'); 
@@ -257,7 +257,8 @@ class TravelRequestController extends Controller
             'name' => $this->name,
             'nameprojec' => $nameProject,
             'nameuser' => $nameUser,
-            'id' => $id
+            'id' => $id,
+            'status_approver' => $travelRequest->status_approve
         ]);
     }
 
@@ -451,6 +452,41 @@ class TravelRequestController extends Controller
         return $pdf->download('kasbon_report.pdf');
     }
 
-    
+    public function ExportEcxelKasbon($id)
+    {
+        $data1= TravelRequest::with('participants.user.karyawan.jabatan','penanggungjawab.user','expenses','categorypf','user','karyawan.jabatan','karyawan.departement','karyawan.user')->where('id',$id)->first();
+        $name1 = $data1->name_project;
+        $participants = $data1->participants;
+        $total = $data1->expenses->sum('total');
+        
+        $data = [
+            'title' => 'FORM PENGAJUAN KASBON PERJALANAN DINAS',
+            'no' => '240090/SK/FAD-HMJ/N/2024',
+            'name' => $data1->karyawan->user->name,
+            'nik' => $data1->karyawan->nik,
+            'department' => $data1->karyawan->departement->name ?? '-',
+            'jabatan' => $data1->karyawan->jabatan->name ?? '-',
+            'no_telepon' => $data1->karyawan->nomortlp ?? '-',
+            'nama_project' => $name1 ?? '-',
+            'no_so' => $data1->nomorso ?? '-',
+            'lokasi_kerja' => $data1->lokasikerja,
+            'keperluan' => $data1->keperluan,
+            'category_product' => 'Furniture',
+            'peserta_perjalanan' => $participants,
+            'penanggung_jawab' => $data1->penanggungjawab->user->name,
+            'estimasi_biaya' => $data1->expenses,
+            'total_cash_advance' => $total,
+            'terbilang' => 'EMPAT BELAS JUTA RUPIAH',
+            'pembon' => [
+                'pemohon' => $data1->karyawan->user->name,
+                'atasan_langsung' => 'HL',
+                'tanggal' => '16/10/2024',
+                'disetujui_cso' => 'HL',
+                'disetujui_direksi' => '',
+            ],
+        ];
+
+        return Excel::download(new KasbonExport($data), 'kasbon.xlsx');
+    }
 
 }

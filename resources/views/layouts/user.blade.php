@@ -85,7 +85,10 @@
                     // Jika menu ini adalah "Perjalanan Dinas", pastikan juga aktif saat membuka halaman details
                     if ($menu->route === 'perdin.index' && Request::is('perdin/*')) {
                         $isActive = true;
+                    } elseif ($menu->route === 'historyrealisasi.index' && Request::is('historyrealisasi/*')) {
+                      $isActive = true;
                     }
+
             
                     // Set class 'active open' jika menu ini aktif
                     $activeClass = $isActive ? 'active open' : '';
