@@ -43,7 +43,7 @@ $(document).ready(function () {
             dataSrc: function(json) {
                 $('#totalKeseluruhan').text(formatRupiah(json.totalKeseluruhan));
     
-                if (json.status_approve == 5) {
+                if (json.status_approve == 5 || json.status_approve == 1) {
                     table.column(5).visible(false);
                 } else {
                     table.column(5).visible(true); 
@@ -168,7 +168,7 @@ $(document).ready(function () {
         url: '/statusapprove/' + id,  
         type: 'GET',
         success: function (response) {
-            if (response.status_approve == 5) {
+            if (response.status_approve == 5 || response.status_approve == 1) {
                 $('#addJabatan').addClass('hiddendetail')
             } else {
                 $('#addJabatan').removeClass('hiddendetail');
@@ -210,7 +210,7 @@ $(document).ready(function () {
                 table.ajax.reload();
                 updateButton(response.status_approve);
                 console.log(response.status_approve)
-                if (response.status_approve == 5) {
+                if (response.status_approve == 5 || response.status_approve == 1) {
                     $('#addJabatan').addClass('hiddendetail')
                 } else {
                     $('#addJabatan').removeClass('hiddendetail');

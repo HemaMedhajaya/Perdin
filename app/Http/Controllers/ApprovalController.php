@@ -33,7 +33,9 @@ class ApprovalController extends Controller
     public function getData(Request $request)
     {
         if ($request->ajax()) {
-            $data = TravelRequest::with(['user'])->select('*')->get();
+            $data = TravelRequest::with(['user'])->select('*')
+            ->where('status_approve', 5)
+            ->get();
 
             return DataTables::of($data)
                 ->addColumn('user_name', function ($data) {
@@ -41,17 +43,19 @@ class ApprovalController extends Controller
                 })
                 ->addColumn('status_approve', function ($data) {
                     $status = [
-                        0 => '<span class="badge bg-label-warning">Diproses</span>',
+                        0 => '<span class="badge bg-label-secondary">Draft</span>',
+                        5 => '<span class="badge bg-label-warning">Diproses</span>',
                         1 => '<span class="badge bg-label-success">Disetujui</span>',
                         2 => '<span class="badge bg-label-danger">Ditolak</span>',
                     ];
                     return $status[$data->status_approve] ?? '<span class="badge badge-secondary">Tidak Diketahui</span>';
                 })
                 ->addColumn('action', function($data) {
+                    $detailUrl = route('approver.detail', ['id' => $data->id]);
                     return '
-                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $data->id . '">
-                            <i class="fas fa-edit"></i> Detail
-                        </button>
+                        <a href="' . $detailUrl . '" class="btn btn-sm btn-info" " data-toggle="tooltip" data-placement="top" title="Detail">
+                            <i class="bx bx-detail"></i>
+                        </a>
                     ';
                 })
                 ->rawColumns(['status_approve','action'])

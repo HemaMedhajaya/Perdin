@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BiayaController;
 use App\Http\Controllers\CategoryproductController;
 use App\Http\Controllers\DepartementController;
+use App\Http\Controllers\DetailApproverControler;
+use App\Http\Controllers\HistoryRealisasiController;
 use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\MenuController;
@@ -140,11 +142,18 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::get('/perdin/{id}/detail-sebelum', [RealisasiController::class, 'getDataSebelum']);
     Route::get('/perdin/realisasi/{id}/detail-sesudah', [RealisasiController::class, 'getDatasesudah']);
     Route::get('/perdin/{id}/detail-combined', [RealisasiController::class, 'getDataCombined']);
-
+    // End Realisasi Perjalan Dinas
+    
     Route::get('/export/perjalanan', [RealisasiController::class, 'export'])->name('export.excel');
 
-
+    // Export PDF & Excel Perdin Sebelum Realisasi
     Route::get('/export-kasbon-pdf/{id}', [TravelRequestController::class, 'exportPDF'])->name('export.kasbon.pdf');
+    Route::get('/export-kasbon-excel/{id}', [TravelRequestController::class, 'ExportEcxelKasbon'])->name('export.kasbon.excel');
+    // End PDF & Excel Perdin Sebelum Realisasi
+    Route::get('/historyrealisasi', [HistoryRealisasiController::class, 'index'])->name('historyrealisasi.index');
+    Route::get('/historyrealisasi/data', [HistoryRealisasiController::class, 'getData'])->name('historyrealisasi.data');
+    Route::get('/historyrealisasi/realisasi/{id}', [HistoryRealisasiController::class, 'sudahRealisasi'])->name('historyrealisasi.realisasi');
+    Route::get('/historyrealisasi/realisasi/data/{id}', [HistoryRealisasiController::class, 'getDataCombined'])->name('historyrealisasi.Combined');
 });
 
 Route::middleware(['check.expired', 'role:adminapprover'])->group(function() {
@@ -156,6 +165,12 @@ Route::middleware(['check.expired', 'role:adminapprover'])->group(function() {
     Route::get('/approver/userpj', [ApprovalController::class, 'getUserpj'])->name('approver.userpj');
     Route::get('/approver/{id}/edit', [ApprovalController::class, 'edit'])->name('approver.edit');
     // Route::post('/approver')
+
+    // Detail
+    Route::get('/approver/detail/{id}', [DetailApproverControler::class, 'index'])->name('approver.detail');
+    Route::get('/approver/detail/{id}/data', [DetailApproverControler::class, 'getDataDetailApprover'])->name('approver.detail.data');
+    Route::get('/approver/detail/{id}/edit', [DetailApproverControler::class, 'editdetail'])->name('approver.detail.edit');
+    Route::put('/approver/detail/{id}/update', [DetailApproverControler::class, 'updateTravelRequest'])->name('approver.detail.approve');
 
 });
 
