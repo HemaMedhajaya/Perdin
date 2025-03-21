@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Exports\KasbonExport;
 use App\Models\Categoryproduct;
+use App\Models\MatrixApprovals;
 use App\Models\Travelcategory;
 use App\Models\TravelExpense;
 use App\Models\TravelParticipant;
@@ -10,6 +11,8 @@ use App\Models\TravelPenanggungjawab;
 use App\Models\TravelRealisasi;
 use App\Models\User;
 use App\Models\TravelRequest;
+use App\Models\UserMatrixApprovals;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Karyawan;
@@ -40,46 +43,71 @@ class TravelRequestController extends Controller
         $userid = session('user_id');
         if ($request->ajax()) {
             $data = TravelRequest::with(['user', 'participants', 'expenses'])
-                ->select('id', 'name_project', 'status_approve') // Pastikan ambil status_approve
+                ->select('id', 'name_project', 'status_approve','status_approve_realisasi') // Pastikan ambil status_approve
                 ->where('user_id', $userid)
                 ->orderBy('id', 'desc');
 
             return DataTables::of($data)
-                ->addColumn('status_and_action', function ($row) {
+                ->addColumn('status_and_action', function ($data) {
                     $status = [
                         0 => '<span class="badge bg-label-secondary">Draft</span>',
                         5 => '<span class="badge bg-label-warning">Diproses</span>',
                         1 => '<span class="badge bg-label-success">Disetujui</span>',
                         2 => '<span class="badge bg-label-danger">Ditolak</span>',
                     ];
-                    $statusHtml = $status[$row->status_approve] ?? '<span class="badge badge-secondary">Tidak Diketahui</span>';
+                    $statusHtml = $status[$data->status_approve] ?? '<span class="badge bg-label-success">Disetujui</span>';
 
-                    $realisasiUrl = route('perdin.realisasi', ['id' => $row->id]);
-                    $actionRealisasiHtml = '
-                        <a href="' . $realisasiUrl . '" class="btn btn-sm btn-link" data-toggle="tooltip" data-placement="top" title="Realisasi">
-                            <i class="bx bx-calendar-check"></i>
-                        </a>
-                    ';
-
-                    return  $statusHtml . ' ' . $actionRealisasiHtml;
+                    if ($data->status_approve == 2) {
+                        $actionreject = '
+                            <button type="button" id="komentarreject" class="btn btn-sm btn-link" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Komentar">
+                                <i class="bx bx-show"></i>
+                            </button>
+                        ';
+                    } else {
+                        $actionreject = '';
+                    }
+                    return  $statusHtml . ' ' . $actionreject;
                 })
-                ->addColumn('action', function ($row) {
-                    $detailUrl = route('perdin.detail', ['id' => $row->id]);
-                    $realisasilUrl = route('perdin.realisasi', ['id' => $row->id]);
+                ->addColumn('status_and_action_realisasi', function ($data) {
+                    $status = [
+                        2 => '<span class="badge bg-label-warning">Diproses</span>',
+                        1 => '<span class="badge bg-label-secondary">Draft</span>',
+                        3 => '<span class="badge bg-label-danger">Ditolak</span>',
+                        4 => '<span class="badge bg-label-success">Disetujui</span>',
+                    ];
+                    $statusHtml = $status[$data->status_approve_realisasi] ?? '<span class="badge badge-secondary">-</span>';
+
+                    $realisasiUrl = route('perdin.realisasi', ['id' => $data->id]);
+                    $actionRealisasiHtml = '';
+
+                    if (in_array($data->status_approve_realisasi, [1, 2, 3, 4])) {
+                        $actionRealisasiHtml = '
+                            <a href="' . $realisasiUrl . '" class="btn btn-sm btn-link" data-toggle="tooltip" data-placement="top" title="Realisasi">
+                                <i class="bx bx-calendar-check"></i>
+                            </a>
+                        ';
+                    }
+
+                    return $statusHtml . ' ' . $actionRealisasiHtml;
+
+                })
+                ->addColumn('action', function ($data) {
+                    $detailUrl = route('perdin.detail', ['id' => $data->id]);
+                    $realisasilUrl = route('perdin.realisasi', ['id' => $data->id]);
                 
                     return '
-                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $row->id . '" data-toggle="tooltip" data-placement="top" title="Edit">
+                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Edit">
                             <i class="bx bx-edit"></i>
                         </button>
                         <a href="' . $detailUrl . '" class="btn btn-sm btn-info" " data-toggle="tooltip" data-placement="top" title="Detail">
                             <i class="bx bx-detail"></i>
                         </a>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="' . $row->id . '" data-toggle="tooltip" data-placement="top" title="Hapus">
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Hapus">
                             <i class="bx bx-trash"></i>
                         </button>
                     ';
                 })
-                ->rawColumns(['status_and_action', 'action']) 
+                ->rawColumns(['status_and_action', 'action','status_and_action_realisasi']) 
                 ->make(true);
         }
     }
@@ -161,6 +189,51 @@ class TravelRequestController extends Controller
                 'user_id' => $userpjId,
             ]);
         }
+
+        // Ambil data dari model MatrixApprovals untuk id 1 dan 2
+        $matrixApprovals = MatrixApprovals::whereIn('id', [1, 2])->get(); // Bisa ditambah id lain jika perlu
+
+        $totalCount = 0; // Untuk menghitung total data yang akan ditambahkan
+
+        // Loop melalui setiap baris data di MatrixApprovals
+        foreach ($matrixApprovals as $matrixApproval) {
+            $udfValues = [];
+
+            // Loop dari udf1 sampai udf10 (atau lebih, jika perlu)
+            for ($i = 1; $i <= 10; $i++) { 
+                $columnName = 'udf' . $i;
+
+                // Pastikan kolom ada dan nilainya bukan 0 atau null
+                if (!empty($matrixApproval->$columnName) && $matrixApproval->$columnName != 0) {
+                    $udfValues[$columnName] = $matrixApproval->$columnName;
+                }
+            }
+
+            // Hitung jumlah kolom udf yang memiliki nilai
+            $udfCount = count($udfValues);
+            $totalCount += $udfCount; // Tambahkan ke total count
+
+            // Loop untuk mengisi number dan id_user secara berurutan
+            $number = 1;
+            foreach ($udfValues as $column => $id_user) {
+                // Buat instance model UserMatrixApprovals baru
+                $userMatrixApproval = new UserMatrixApprovals();
+
+                // Isi data ke model
+                $userMatrixApproval->id_perdin = $travel_request_id;
+                $userMatrixApproval->id_matrix = $matrixApproval->id;
+                $userMatrixApproval->number = $number;
+                $userMatrixApproval->id_user = $id_user;
+                $userMatrixApproval->status = 'Not Yet';
+
+                // Simpan ke database
+                $userMatrixApproval->save();
+
+                $number++; // Increment number sesuai dengan id_matrix masing-masing
+            }
+        }
+
+
 
         return response()->json(['berhasil' => 'Perjalanan dinas berhasil ditambahkan!']);
 
@@ -288,7 +361,7 @@ class TravelRequestController extends Controller
                     1 => '<span class="badge bg-label-success">Disetujui</span>',
                     2 => '<span class="badge bg-label-danger">Ditolak</span>',
                 ];
-                return $status[$status_approve] ?? '<span class="badge badge-secondary">Tidak Diketahui</span>';
+                return $status[$status_approve] ?? '<span class="badge bg-label-success">Disetujui</span>';
             })
             ->addColumn('action', function ($data) {
                 if ($data->travelRequest->status_approve == 5) {
@@ -487,6 +560,29 @@ class TravelRequestController extends Controller
         ];
 
         return Excel::download(new KasbonExport($data), 'kasbon.xlsx');
+    }
+
+    public function getKomentar($id)
+    {
+        $data = TravelRequest::find($id);
+        if ($data){
+            $komentar = $data->comentar;
+            return response()->json(['komentar' => $komentar,]);
+        } else {
+            return response()->json(['gagal' => 'Data tidak ditemukan!']);
+        }
+
+    }
+
+    public function cekStatusApproveDetail($id)
+    {
+        $request = TravelRequest::find($id);
+        
+        if ($request) {
+            return response()->json(['status_approve_realisasi' => $request->status_approve_realisasi]);
+        }
+
+        return response()->json(['status_approve_realisasi' => 0]); // Default ke 0 jika data tidak ditemukan
     }
 
 }

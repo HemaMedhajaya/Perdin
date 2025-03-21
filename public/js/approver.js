@@ -17,6 +17,7 @@ $(document).ready(function() {
             { data: 'user_name', name: 'user.name' },
             { data: 'name_project', name: 'name_project' },
             { data: 'status_approve', name: 'status_approve', orderable: false, searchable: false, className: 'text-center' },
+            { data: 'status_approve_realisasi', name: 'status_approve_realisasi', orderable: false, searchable: false, className: 'text-center' },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
         ],
         columnDefs: [

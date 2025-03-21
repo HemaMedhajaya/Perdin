@@ -1,4 +1,4 @@
-@extends('layouts.user')
+@extends('layouts.adminapprover')
 @section('title', 'Perjalanan Dinas')
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -10,22 +10,19 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Data Perjalanan Dinas</h5>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('export.excel') }}" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="Excel">
-                            <i class="bx bxs-file-export"></i>
-                        </a>
-                        <button id="exportPDF" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Pdf">
-                            <i class='bx bxs-file-pdf'></i>
+                        <button id="hold" class="request-btn btn btn-secondary mb-3" data-id="" data-bs-toggle="modal" data-bs-target="#komentar">
+                            Hold
                         </button>
-                        <button id="saveData" class="btn btn-success" data-id="">
-                            Submit Request
+                        <button id="reject" class="request-btn btn btn-danger mb-3" data-id="" data-bs-toggle="modal" data-bs-target="#komentar">
+                            Reject
+                        </button>
+                        <button id="approve" class="request-btn btn btn-success mb-3" data-id="" data-bs-toggle="modal" data-bs-target="#approverModal">
+                            Approve
                         </button>
                     </div>
                 </div>
                 
                 <div class="card-body">
-                    <button id="addJabatan" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#biayaModal">
-                        Tambah Biaya
-                    </button>
                     <div class="table-responsive">
                         <table id="tablePerjalanan" class="table table-striped table-bordered w-100">
                             <thead class="thead-dark">
@@ -76,7 +73,7 @@
                 <div class="biaya-item row">
                     <div class="col-md-6">
                         <label class="form-label">Jenis Biaya</label>
-                        <select name="jenis_biaya" class="form-control mb-2">
+                        <select name="jenis_biaya" class="form-control mb-2" disabled>
                             <option value="">Pilih Biaya</option>
                             <option value="1">Transportasi</option>
                             <option value="0">Akomodasi</option>
@@ -85,15 +82,15 @@
                         <input type="hidden" name="idrealisasi" id="idrealisasi">
                         <input type="hidden" data-id="1" name="status_approve" id="status_approve">
                         <label class="form-label">Deskripsi</label>
-                        <input type="text" name="deskripsi" class="form-control mb-2" placeholder="Deskripsi">
+                        <input type="text" name="deskripsi" class="form-control mb-2" placeholder="Deskripsi" readonly>
                         <label class="form-label">Keterangan</label>
-                        <textarea name="keterangan" class="form-control mb-2" placeholder="Keterangan"></textarea>
+                        <textarea name="keterangan" class="form-control mb-2" placeholder="Keterangan" readonly></textarea>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Biaya</label>
-                        <input type="number" name="biaya" class="form-control mb-2" placeholder="Biaya">
+                        <input type="number" name="biaya" class="form-control mb-2" placeholder="Biaya" readonly>
                         <label class="form-label">Qty</label>
-                        <input type="number" name="qty" class="form-control mb-2" placeholder="Qty">
+                        <input type="number" name="qty" class="form-control mb-2" placeholder="Qty" readonly>
                         <label class="form-label">Total</label>
                         <input type="number" name="total" class="form-control mb-2" placeholder="Total" readonly>
                     </div>
@@ -107,41 +104,44 @@
     </div>
 </div>
 
-<!-- Modal Hapus -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+{{-- Modal konfirmasi tolak --}}
+<div class="modal fade" id="komentar" tabindex="-1" aria-labelledby="komentarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <h5 class="modal-title" id="komentarLabel">Alasan Penolakan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus user ini?</p>
-                <input type="hidden" id="deleterealisasi">
+                <input type="hidden" id="travelrequestid">
+                <div class="mb-2">
+                    <textarea id="komentarText" class="form-control" placeholder="Masukkan alasan penolakan"></textarea>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button id="confirmDelete" class="btn btn-danger">Hapus</button>
+                <button id="RejectPerdin" data-id="{{$id}}" data-status="3" class="btn btn-danger action-button">Tolak</button>
             </div>
         </div>
     </div>
 </div>
 
-{{-- Modal Submit Request --}}
-<div class="modal fade" id="submitRequestModal" tabindex="-1" aria-labelledby="submitRequestModalLabel" aria-hidden="true">
+<!-- Modal Approve -->
+<div class="modal fade" id="approverModal" tabindex="-1" aria-labelledby="approverModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="submitRequestModalLabel">Konfirmasi Submit Request</h5>
+                <h5 class="modal-title" id="approverModalLabel">Konfirmasi Persetujuan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Apakah Anda yakin ingin mengirim realisasi ini?</p>
-                <input type="hidden" id="requestId">
+                <input type="hidden" id="travelrequestidapprove">
+                <p>Apakah Anda yakin ingin menyetujui permintaan ini?</p>
+                <input type="hidden" id="approverjabatanid">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button id="confirmSubmit"  data-idrequesttravel="{{ $id }}" class="btn btn-success">Submit</button>
+                <button id="confirmapprover" data-id="{{$id}}" data-status="4" class="btn btn-success action-button">Setujui</button>
             </div>
         </div>
     </div>
@@ -149,5 +149,5 @@
 @endsection
 
 @section('script')
-<script src="{{ asset('js/realisasi.js') }}" ></script>
+<script src="{{ asset('js/realisasiadminapprover.js') }}" ></script>
 @endsection

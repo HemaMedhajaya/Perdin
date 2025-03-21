@@ -15,7 +15,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Project</th>
-                                        <th>Status Approve</th>
+                                        <th>Status Perdin</th>
+                                        <th>Status Realisasi</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -208,6 +209,22 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button id="confirmDelete" class="btn btn-danger">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="komentarshow" tabindex="-1" aria-labelledby="komentarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="komentarLabel">Alasan Penolakan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="travelrequestid">
+                    <div class="mb-2">
+                        <textarea id="komentarText" class="form-control" placeholder="Masukkan alasan penolakan" readonly></textarea>
+                    </div>
                 </div>
             </div>
         </div>

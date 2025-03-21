@@ -100,5 +100,23 @@ $(document).ready(function () {
             }
         });
     });
+
+
+    var idtravelrequest = $('#idtravelrequest').val();
+    console.log(idtravelrequest);
+    $.ajax({
+        url: '/statusapproveadmin/' + idtravelrequest,  
+        type: 'GET',
+        success: function (response) {
+            console.log('sampai');
+            if (response.status_approve == 1 || response.status_approve == 2 || response.userApproval == 'Approve') {
+                $('#reject').addClass('hiddenbutton')
+                $('#approve').addClass('hiddenbutton')
+            } else {
+                $('#addJabatan').removeClass('hiddendetail');
+            }
+        }
+    });
+
     
 });

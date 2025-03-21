@@ -42,7 +42,8 @@
                                     Approve
                                 </button>
                             </div>
-                        </div>                     
+                        </div>   
+                        <input type="hidden" id='idtravelrequest' value="{{ $id }}">                  
                         <div class="table-responsive" style="overflow-x: auto;">
                             <table id="detailTable" class="table table-striped table-bordered w-100">
                                 <thead class="thead-dark">

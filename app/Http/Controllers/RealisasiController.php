@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\PerjalananExport;
 use App\Models\TravelExpense;
 use App\Models\TravelRealisasi;
+use App\Models\TravelRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -23,9 +24,9 @@ class RealisasiController extends Controller
         }
     }
 
-    public function index()
+    public function index($id)
     {
-        return view('user.travel.realisasi', ['name' => $this->name]);
+        return view('user.travel.realisasi', ['name' => $this->name, 'id' => $id]);
     }
 
     public function getDataRealisasi($id)
@@ -148,7 +149,8 @@ class RealisasiController extends Controller
         $dataSebelum = TravelExpense::with('travelRequest')
             ->where('travel_request_id', $id)
             ->get();
-
+        $travelrequest = TravelRequest::find($id);
+        $status_approve_realisasi = $travelrequest->status_approve_realisasi;
         // Data Sesudah
         $dataSesudah = DB::table('travel_expenses as te')
             ->leftJoin('travel_requests as tr', 'te.travel_request_id', '=', 'tr.id')
@@ -157,7 +159,7 @@ class RealisasiController extends Controller
                 $query->where('te.travel_request_id', $id)
                     ->orWhere('te.travel_request_id_realisasi', $id);
             })
-            ->select('te.*', 'tr.status_approve as status_approve', 'tr_realisasi.status_approve as status_approve_realisasi')
+            ->select('te.*', 'tr.status_approve_realisasi as status_approve_realisasi')
             ->get();
 
         // Hitung Total Keseluruhan Sebelum Realisasi
@@ -185,6 +187,14 @@ class RealisasiController extends Controller
                 'jenis_perjalanan_sesudah' => $after ? ($after->jenis_perjalanan_realisasi == 1 ? 'Transportasi' : 'Akomodasi') : '',
                 'description_sesudah' => $after ? ($after->description_realisasi ?? $after->description) : '',
                 'total_sesudah' => $after ? ($after->total_realisasi ?? $after->total) : '',
+                'status_approve_realisasi' => $after ? (
+                                [
+                                    2 => '<span class="badge bg-label-warning">Diproses</span>',
+                                    1 => '<span class="badge bg-label-secondary">Draft</span>',
+                                    3 => '<span class="badge bg-label-danger">Ditolak</span>',
+                                    4 => '<span class="badge bg-label-success">Disetujui</span>',
+                                ][$after->status_approve_realisasi] ?? ''
+                            ) : '',
                 'action' => $after ? '<button class="btn btn-sm btn-primary edit-btn" data-id="'.$after->id.'"><i class="bx bx-edit"></i></button> 
                                     <button class="btn btn-sm btn-danger delete-btn" data-id="'.$after->id.'"><i class="bx bx-trash"></i></button>' : ''
             ];
@@ -193,9 +203,10 @@ class RealisasiController extends Controller
         return DataTables::of($data)
             ->with([
                 'totalKeseluruhan' => $totalSebelum, 
-                'totalSesudah' => $totalSesudah
+                'totalSesudah' => $totalSesudah,
+                'status_approve_realisasi' => $status_approve_realisasi
             ])
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'status_approve_realisasi'])
             ->make(true);
     }
 
@@ -208,6 +219,34 @@ class RealisasiController extends Controller
     {
         // Download file Excel
         return Excel::download(new PerjalananExport, 'users1.xlsx');
+    }
+
+    public function approveRealisasi(Request $request, $id)
+    {
+        $data = TravelRequest::find($id);
+
+        if (!$data) {
+            return response()->json(['gagal' => 'Data tidak ditemukan!']);
+        }
+
+        $idrequest = $request->idrequest;
+
+        if ($idrequest != 1 && $idrequest != 2 ) {
+            return response()->json(['gagal' => 'Id request tidal valid!']);
+        }
+
+        $data->update([
+            'status_approve_realisasi' => $idrequest,
+        ]);
+
+        $message = ($idrequest == 2)
+            ? 'Realisasi berhasil dikirim!'
+            : 'Realisasi berhsail dibatalkan!';
+
+        return response()->json([
+            'berhasil' => $message,
+            'status_approve_realisasi' => $data->status_approve_realisasi
+        ]);
     }
 
 

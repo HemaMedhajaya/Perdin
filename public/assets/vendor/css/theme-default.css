@@ -103,6 +103,10 @@
   visibility: hidden;
 }
 
+.hiddenbutton {
+  display: none !important;
+}
+
 th {
   white-space: nowrap;
 }

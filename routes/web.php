@@ -119,6 +119,7 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::get('/perdin/{id}/edit', [TravelRequestController::class, 'edit'])->name('perdin.edit');
     Route::put('/perdin/{id}', [TravelRequestController::class, 'update'])->name('perdin.update');
     Route::delete('/perdin/{id}', [TravelRequestController::class, 'destroy'])->name('perdin.destroy');
+    Route::get('/komentar/{id}', [TravelRequestController::class, 'getKomentar'])->name('perdin.komentar');
     // End Perjalan Dinas
 
     // Detail Perjalan Dinas
@@ -130,6 +131,7 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::delete('/detail/{id}', [TravelRequestController::class, 'destroydetail'])->name('perdin.destroydetail');
     Route::put('/submitrequest/{id}', [TravelRequestController::class, 'submitRequest'])->name('detail.submitrequest');
     Route::get('/statusapprove/{id}', [TravelRequestController::class, 'cekStatusApprove'])->name('detail.statusapprove');
+    Route::get('/statusapprovedetail/{id}', [TravelRequestController::class, 'cekStatusApproveDetail'])->name('detail.statusapprovedetail');
     // End Detail Perjalan Dinas
 
     // Realisasi Perjalan Dinas
@@ -142,6 +144,7 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::get('/perdin/{id}/detail-sebelum', [RealisasiController::class, 'getDataSebelum']);
     Route::get('/perdin/realisasi/{id}/detail-sesudah', [RealisasiController::class, 'getDatasesudah']);
     Route::get('/perdin/{id}/detail-combined', [RealisasiController::class, 'getDataCombined']);
+    Route::put('/statusapprove/realisasi/{id}', [RealisasiController::class, 'approveRealisasi'])->name('approve.realisasi');
     // End Realisasi Perjalan Dinas
     
     Route::get('/export/perjalanan', [RealisasiController::class, 'export'])->name('export.excel');
@@ -164,6 +167,7 @@ Route::middleware(['check.expired', 'role:adminapprover'])->group(function() {
     Route::get('/approver/getcategoryproduct', [ApprovalController::class, 'getCategoryProduct'])->name('approver.getcategoryproduct');
     Route::get('/approver/userpj', [ApprovalController::class, 'getUserpj'])->name('approver.userpj');
     Route::get('/approver/{id}/edit', [ApprovalController::class, 'edit'])->name('approver.edit');
+    Route::get('/statusapproveadmin/{id}', [DetailApproverControler::class, 'cekStatusApprove'])->name('cekapprover.admin');
     // Route::post('/approver')
 
     // Detail
@@ -171,6 +175,13 @@ Route::middleware(['check.expired', 'role:adminapprover'])->group(function() {
     Route::get('/approver/detail/{id}/data', [DetailApproverControler::class, 'getDataDetailApprover'])->name('approver.detail.data');
     Route::get('/approver/detail/{id}/edit', [DetailApproverControler::class, 'editdetail'])->name('approver.detail.edit');
     Route::put('/approver/detail/{id}/update', [DetailApproverControler::class, 'updateTravelRequest'])->name('approver.detail.approve');
+    // End Detail
 
+    // Realisasi
+    Route::get('/approver/realisasi/{id}', [ApprovalController::class, 'realisasiDetail'])->name('approveadmin.realisasi');
+    Route::get('/approver/relaisasi/{id}/data', [ApprovalController::class, 'getDataCombined'])->name('approveadmin.combined');
+    Route::put('/approver/realisasi/{id}/update', [ApprovalController::class, 'updateTravelRequest'])->name('approveadmin.realisasi.user');
+    Route::get('/approve/statusapprove/{id}', [ApprovalController::class, 'cekStatusApprove'])->name('cekapprover.admin');
+    Route::get('/approve/statusapprove/{id}/detail', [ApprovalController::class, 'getDetail'])->name('cekapprover.admin.detail');
 });
 
