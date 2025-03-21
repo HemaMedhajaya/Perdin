@@ -151,7 +151,7 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
 
     // Export PDF & Excel Perdin Sebelum Realisasi
     Route::get('/export-kasbon-pdf/{id}', [TravelRequestController::class, 'exportPDF'])->name('export.kasbon.pdf');
-    Route::get('/export-kasbon-excel/{id}', [TravelRequestController::class, 'ExportEcxelKasbon'])->name('export.kasbon.excel');
+    Route::get('/export-kasbon-excel/{id}', [TravelRequestController::class, 'exportExcel'])->name('export.kasbon.excel');
     // End PDF & Excel Perdin Sebelum Realisasi
     Route::get('/historyrealisasi', [HistoryRealisasiController::class, 'index'])->name('historyrealisasi.index');
     Route::get('/historyrealisasi/data', [HistoryRealisasiController::class, 'getData'])->name('historyrealisasi.data');

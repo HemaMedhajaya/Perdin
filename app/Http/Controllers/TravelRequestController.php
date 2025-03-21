@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Exports\KasbonExcel;
 use App\Exports\KasbonExport;
 use App\Models\Categoryproduct;
 use App\Models\MatrixApprovals;
@@ -584,5 +585,11 @@ class TravelRequestController extends Controller
 
         return response()->json(['status_approve_realisasi' => 0]); // Default ke 0 jika data tidak ditemukan
     }
+
+    public function exportExcel($id)
+    {
+        return Excel::download(new KasbonExcel($id), 'Kasbon_Report.xlsx');
+    }
+    
 
 }
