@@ -208,8 +208,8 @@ Route::middleware(['check.expired', 'role:admin'])->group(function() {
     Route::get('/approve/statusapprove/{id}', [ApprovalController::class, 'cekStatusApprove'])->name('cekapprover.admin');
     Route::get('/approve/statusapprove/{id}/detail', [ApprovalController::class, 'getDetail'])->name('cekapprover.admin.detail');
 
-    Route::get('/export-kasbon-pdf/{id}', [ApprovalController::class, 'exportPDF'])->name('export.kasbon.admin.pdf');
-    Route::get('/export-kasbon-excel/{id}', [ApprovalController::class, 'exportExcel'])->name('export.kasbon.admin.excel');
+    Route::get('/export-kasbon-pdf/admin/{id}', [ApprovalController::class, 'exportPDF'])->name('export.kasbon.admin.pdf');
+    Route::get('/export-kasbon-excel/admin/{id}', [ApprovalController::class, 'exportExcel'])->name('export.kasbon.admin.excel');
     Route::get('/export/realisasi/admin/{id}', [ApprovalController::class, 'exportExcelRealisasi'])->name('export.excel.admin.realisasi');
 });
 
