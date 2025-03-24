@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Exports\KasbonExcel;
 use App\Exports\RealisasiExcel;
 use App\Models\Categoryproduct;
+use App\Models\PermissionRole;
 use App\Models\TravelExpense;
 use App\Models\TravelRequest;
 use App\Models\User;
 use App\Models\UserMatrixApprovals;
+use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +41,8 @@ class ApprovalController extends Controller
 
     public function getData(Request $request)
     {
+        $permissionDetailPerjalananDinas = PermissionRole::getPermission('Detail Approver Perdin', Auth::user()->role);
+        $permissionRealisasiPerjalananDinas = PermissionRole::getPermission('Realisasi Approver Perdin', Auth::user()->role);
         $userid = session('user_id');
         
         if ($request->ajax()) {
@@ -129,7 +133,7 @@ class ApprovalController extends Controller
                     return $status[$data->status_approve] ?? '<span class="badge bg-label-secondary">Tidak Diketahui</span>';
                 })
                 
-                ->addColumn('status_approve_realisasi', function ($data) use ($userid) {
+                ->addColumn('status_approve_realisasi', function ($data) use ($userid, $permissionRealisasiPerjalananDinas) {
                     $userApproval = UserMatrixApprovals::where('id_user', $userid)
                         ->where('id_perdin', $data->id)
                         ->where('id_matrix', 2)
@@ -147,13 +151,15 @@ class ApprovalController extends Controller
                     $statusHtml = $status[$data->status_approve_realisasi] ?? '<span class="badge badge-secondary">-</span>';
                 
                     $actionRealisasiHtml = '';
-                    if (in_array($data->status_approve_realisasi, [2, 3, 4])) {
-                        $realisasiUrl = route('approveadmin.realisasi', ['id' => $data->id]);
-                        $actionRealisasiHtml = '
-                            <a href="' . $realisasiUrl . '" class="btn btn-sm btn-link" data-toggle="tooltip" data-placement="top" title="Realisasi">
-                                <i class="bx bx-calendar-check"></i>
-                            </a>
-                        ';
+                    if ($permissionRealisasiPerjalananDinas > 0) {
+                        if (in_array($data->status_approve_realisasi, [2, 3, 4])) {
+                            $realisasiUrl = route('approveadmin.realisasi', ['id' => $data->id]);
+                            $actionRealisasiHtml = '
+                                <a href="' . $realisasiUrl . '" class="btn btn-sm btn-link" data-toggle="tooltip" data-placement="top" title="Realisasi">
+                                    <i class="bx bx-calendar-check"></i>
+                                </a>
+                            ';
+                        }
                     }
                 
                     if ($userApproval->status == 'Approve') {
@@ -163,13 +169,18 @@ class ApprovalController extends Controller
                     return $statusHtml . ' ' . $actionRealisasiHtml;
                 })
                                
-                ->addColumn('action', function ($data) {
+                ->addColumn('action', function ($data) use ($permissionDetailPerjalananDinas) {
                     $detailUrl = route('approver.detail', ['id' => $data->id]);
-                    return '
-                        <a href="' . $detailUrl . '" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail">
-                            <i class="bx bx-detail"></i>
-                        </a>
-                    ';
+                    $detailButton = '';
+
+                    if ($permissionDetailPerjalananDinas > 0) {
+                        $detailButton = '
+                            <a href="' . $detailUrl . '" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail">
+                                <i class="bx bx-detail"></i>
+                            </a>
+                        ';
+                    }
+                    return $detailButton;
                 })
                 ->rawColumns(['status_approve', 'action', 'status_approve_realisasi'])
                 ->make(true);

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PermissionRole;
 use App\Models\TravelExpense;
 use App\Models\TravelRequest;
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -46,13 +48,17 @@ class HistoryRealisasiController extends Controller
                     return  $statusHtml;
                 })
                 ->addColumn('action', function ($data) {
+                    $DetailButton = '';
+                    $permissionDetailRealisasi = PermissionRole::getPermission('Detail Realisasi', Auth::user()->role);
                     $realisasiUrl = route('historyrealisasi.realisasi', ['id' => $data->id]);
-                
-                    return '
-                        <a href="' . $realisasiUrl . '" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Realisasi">
+                    if($permissionDetailRealisasi > 0) {
+                        $DetailButton = '
+                            <a href="' . $realisasiUrl . '" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Realisasi">
                             <i class="bx bx-calendar-check"></i>
                         </a>
-                    ';
+                        ';
+                    }
+                    return $DetailButton;
                 })
                 ->rawColumns(['status_and_action', 'action']) 
                 ->make(true);

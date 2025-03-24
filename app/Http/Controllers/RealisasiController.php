@@ -89,14 +89,12 @@ class RealisasiController extends Controller
 
     public function edit($id)
     {
-        // Ambil data dari tabel travel_expenses
         $data = TravelExpense::find($id);
-
+        
         if (!$data) {
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
         }
 
-        // Siapkan respons dengan prioritas realisasi
         $response = [
             'id' => $data->id,
             'travel_request_id' => $data->travel_request_id_realisasi ?? $data->travel_request_id,

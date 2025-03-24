@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departement;
+use App\Models\PermissionRole;
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
 use App\Models\User;
@@ -25,6 +27,7 @@ class KaryawanController extends Controller
 
     public function index()
     {
+        $data['permissionAddKaryawan'] = PermissionRole::getPermission('Add Karyawan', Auth::user()->role);
         $jabatan = Jabatan::all();
         $departement = Departement::all(); 
         $user = User::all();
@@ -32,32 +35,49 @@ class KaryawanController extends Controller
             'name' => $this->name, 
             'jabatan' => $jabatan,
             'departement' => $departement,
-            'user' => $user
+            'user' => $user,
+            'data' => $data
         ]);
     }
 
     public function getData()
     {
+        $permissionEditKaryawan = PermissionRole::getPermission('Edit Karyawan', Auth::user()->role);
+        $permissionDeleteKaryawan = PermissionRole::getPermission('Delete Karyawan', Auth::user()->role);
+
         return DataTables::of(Karyawan::with('user', 'jabatan', 'departement'))
             ->addColumn('jabatan', fn($karyawan) => $karyawan->jabatan->name ?? '-')
             ->addColumn('departement', fn($karyawan) => $karyawan->departement->name ?? '-')
             ->addColumn('user', fn($karyawan) => $karyawan->user->name ?? '-')
             ->addColumn('name', fn($karyawan) => $karyawan->user->name ?? '-')
             ->addColumn('email', fn($karyawan) => $karyawan->user->email ?? '-')
-            ->addColumn('status_user', fn($karyawan) => $karyawan->user?->status_user == 1 ? 'Akses' : 'Non Akses')    
-            ->addColumn('action', function ($karyawan) {
-                return '
-                    <button class="btn btn-sm btn-primary edit-btn" data-id="' . $karyawan->id . '">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="' . $karyawan->id . '">
-                        <i class="fas fa-trash-alt"></i> Hapus
-                    </button>
-                ';
+            ->addColumn('status_user', fn($karyawan) => $karyawan->user?->status_user == 1 ? 'Akses' : 'Non Akses')
+            ->addColumn('action', function ($karyawan) use ($permissionEditKaryawan, $permissionDeleteKaryawan) {
+                $editButton = '';
+                $deleteButton = '';
+                
+                if ($permissionEditKaryawan > 0) {
+                    $editButton = '
+                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $karyawan->id . '">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    ';
+                }
+
+                if ($permissionDeleteKaryawan > 0) {
+                    $deleteButton = '
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="' . $karyawan->id . '">
+                            <i class="fas fa-trash-alt"></i> Hapus
+                        </button>
+                    ';
+                }
+
+                return $editButton . $deleteButton;
             })
-            ->rawColumns(['action'])
-            ->make(true);
+            ->rawColumns(['action'])  
+            ->make(true);  
     }
+
 
     public function store(Request $request)
     {

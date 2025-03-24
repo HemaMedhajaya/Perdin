@@ -7,7 +7,9 @@
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 order-0">
             <div class="card">
                 <div class="card-body">
-                    <button id="addKarywans" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">Tambah Karyawan</button>
+                    @if ($data['permissionAddKaryawan'] > 0)
+                        <button id="addKarywans" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">Tambah Karyawan</button>
+                    @endif
                     <div class="table-responsive" style="overflow-x: auto;">
                         <table id="usersTable" class="table table-striped table-bordered w-100">
                             <thead class="thead-dark">

@@ -5,6 +5,7 @@ use App\Exports\KasbonExcel;
 use App\Exports\KasbonExport;
 use App\Models\Categoryproduct;
 use App\Models\MatrixApprovals;
+use App\Models\PermissionRole;
 use App\Models\Travelcategory;
 use App\Models\TravelExpense;
 use App\Models\TravelParticipant;
@@ -13,6 +14,7 @@ use App\Models\TravelRealisasi;
 use App\Models\User;
 use App\Models\TravelRequest;
 use App\Models\UserMatrixApprovals;
+use Auth;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -36,11 +38,15 @@ class TravelRequestController extends Controller
     }
     public function index()
     {
-        return view('user.travel.index', ['name' => $this->name]);
+        $data['permissionAddPerjalananDinas'] = PermissionRole::getPermission('Add Perjalanan Dinas', Auth::user()->role);
+        return view('user.travel.index', ['name' => $this->name, 'data' => $data]);
     }
 
     public function getData(Request $request)
     {
+        $permissionEditPerjalananDinas = PermissionRole::getPermission('Edit Perjalanan Dinas', Auth::user()->role);
+        $permissionDeletePerjalananDinas = PermissionRole::getPermission('Delete Perjalanan Dinas', Auth::user()->role);
+
         $userid = session('user_id');
         if ($request->ajax()) {
             $data = TravelRequest::with(['user', 'participants', 'expenses'])
@@ -92,20 +98,38 @@ class TravelRequestController extends Controller
                     return $statusHtml . ' ' . $actionRealisasiHtml;
 
                 })
-                ->addColumn('action', function ($data) {
+                ->addColumn('action', function ($data) use ($permissionEditPerjalananDinas, $permissionDeletePerjalananDinas) {
+                    $editButton = '';
+                    $deleteButton = '';
+                    
+                    // Pengecekan izin Edit
+                    if ($permissionEditPerjalananDinas > 0) {
+                        $editButton = '
+                            <button class="btn btn-sm btn-primary edit-btn" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Edit">
+                                <i class="bx bx-edit"></i>
+                            </button>
+                        ';
+                    }
+                    
+                    // Pengecekan izin Delete
+                    if ($permissionDeletePerjalananDinas > 0) {
+                        $deleteButton = '
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Hapus">
+                                <i class="bx bx-trash"></i>
+                            </button>
+                        ';
+                    }
+            
+                    // Menambahkan link Detail
                     $detailUrl = route('perdin.detail', ['id' => $data->id]);
-                    $realisasilUrl = route('perdin.realisasi', ['id' => $data->id]);
-                
-                    return '
-                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Edit">
-                            <i class="bx bx-edit"></i>
-                        </button>
-                        <a href="' . $detailUrl . '" class="btn btn-sm btn-info" " data-toggle="tooltip" data-placement="top" title="Detail">
+                    $realisasiUrl = route('perdin.realisasi', ['id' => $data->id]);
+            
+                    // Mengembalikan tombol sesuai izin
+                    return $editButton . '
+                        <a href="' . $detailUrl . '" class="btn btn-sm btn-info" data-toggle="tooltip" data-placement="top" title="Detail">
                             <i class="bx bx-detail"></i>
                         </a>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Hapus">
-                            <i class="bx bx-trash"></i>
-                        </button>
+                        ' . $deleteButton . '
                     ';
                 })
                 ->rawColumns(['status_and_action', 'action','status_and_action_realisasi']) 
