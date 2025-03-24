@@ -58,38 +58,25 @@ class PermissionController extends Controller
 
         $submenu_id = $request->submenu_id;
 
-// Cek apakah submenu_id sudah ada pada tabel Permission
-$existingGroup = Permission::where('submenu_id', $submenu_id)
-                            ->orderBy('groupby', 'desc')
-                            ->first();
+        // Cek apakah submenu_id sudah ada pada tabel Permission
+        $existingGroup = Permission::where('submenu_id', $submenu_id)->first();
 
-if ($existingGroup) {
-    // Jika ada, set groupby berdasarkan nilai tertinggi yang ada
-    $groupby = $existingGroup->groupby;
-} else {
-    // Jika submenu_id baru, set groupby menjadi 1
-    $groupby = 1;
-}
+        if ($existingGroup) {
+            // Jika submenu_id sudah ada, ambil nilai groupby yang sudah ada
+            $groupby = $existingGroup->groupby;
+        } else {
+            // Jika submenu_id baru, cari nilai groupby tertinggi dan tambahkan 1
+            $maxGroupby = Permission::max('groupby');
+            $groupby = $maxGroupby ? $maxGroupby + 1 : 1;
+        }
 
-// Cek apakah submenu_id berbeda dari sebelumnya
-$previousSubmenuId = Permission::where('groupby', '>', 0)
-                                ->orderBy('groupby', 'desc')
-                                ->first();
-
-if ($previousSubmenuId && $previousSubmenuId->submenu_id !== $submenu_id) {
-    // Jika submenu_id berubah, naikkan groupby
-    $groupby = Permission::where('submenu_id', '!=', $submenu_id)->max('groupby') + 1;
-}
-
-// Menyimpan data permission dengan groupby yang sesuai
-$permission = Permission::create([
-    'name' => $request->name,
-    'slug' => $request->slug,
-    'groupby' => $groupby,
-    'submenu_id' => $submenu_id,
-]);
-
-
+        // Menyimpan data permission dengan groupby yang sesuai
+        $permission = Permission::create([
+            'name' => $request->name,
+            'slug' => $request->slug,
+            'groupby' => $groupby,
+            'submenu_id' => $submenu_id,
+        ]);
         return response()->json(['berhasil' => 'Permission berhasil ditambahkan!']);
     }
 
@@ -108,7 +95,6 @@ $permission = Permission::create([
     {
         $validator = Validator::make($request->all(),[
             'name' => 'required',
-            'groupby' => 'required',
             'slug' => 'required',
             'submenu_id' => 'required',
         ]);
