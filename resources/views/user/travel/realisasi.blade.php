@@ -10,7 +10,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Data Perjalanan Dinas</h5>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('export.excel') }}" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="Excel">
+                        <a href="{{ route('export.excel.realisasi', ['id' => $id]) }}" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="Excel">
                             <i class="bx bxs-file-export"></i>
                         </a>
                         <button id="exportPDF" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Pdf">

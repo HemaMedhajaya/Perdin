@@ -9,7 +9,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Data Perjalanan Dinas</h5>
+                    
                     <div class="d-flex gap-2">
+                        <a href="{{ route('export.excel.admin.realisasi', ['id' => $id]) }}" class="btn btn-outline-success mb-2" data-toggle="tooltip" data-placement="top" title="Excel">
+                            <i class="bx bxs-file-export"></i>
+                        </a>
                         <button id="hold" class="request-btn btn btn-secondary mb-3" data-id="" data-bs-toggle="modal" data-bs-target="#komentar">
                             Hold
                         </button>

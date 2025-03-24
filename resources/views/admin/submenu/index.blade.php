@@ -48,6 +48,16 @@
                     <input type="text" id="route" class="form-control" placeholder="Route">
                 </div>
                 <div class="mb-2">
+                    <select name="is_parent" id="is_parent" class="form-select">
+                        <option value="">Menu Type</option>
+                        <option value="1">Master Menu</option>
+                        <option value="0">Standalone Menu</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <input type="text" id="icon" class="form-control" placeholder="Icon">
+                </div>
+                <div class="mb-2">
                     <select name="type" id="menu_id" class="form-select">
                     </select>
                 </div>

@@ -60,8 +60,7 @@ class SubMenuController extends Controller
         $request->validate([
             'name' => 'required',
             'route' => 'required',
-            'menu_id' => 'required',
-            'type' => 'required'
+            'type_menu' => 'required'
         ]);
 
         SubMenu::create($request->all());
@@ -89,8 +88,7 @@ class SubMenuController extends Controller
         $request->validate([
             'name' => 'required',
             'route' => 'required',
-            'menu_id' => 'required',
-            'type' => 'required'
+            'type_menu' => 'required'
         ]);
 
         $submenu = SubMenu::find($id);

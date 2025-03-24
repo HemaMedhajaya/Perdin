@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\PerjalananExport;
+use App\Exports\RealisasiExcel;
 use App\Models\TravelExpense;
 use App\Models\TravelRealisasi;
 use App\Models\TravelRequest;
@@ -249,6 +250,9 @@ class RealisasiController extends Controller
         ]);
     }
 
-
+    public function exportExcel($id)
+    {
+        return Excel::download(new RealisasiExcel($id), 'Kasbon_Report.xlsx');
+    }
 
 }

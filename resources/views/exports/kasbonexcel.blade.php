@@ -95,7 +95,7 @@
             <td style="border: 1px solid black; padding: 8px;">{{ $biaya->transportation }}</td>
             <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: right;">Rp {{ number_format($biaya->cost, 0, ',', '.') }} x {{ $biaya->man }}</td>
             <td colspan="2" abbr=""style="border: 1px solid black; padding: 8px;">{{ $biaya->quantity }}</td>
-            <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: right;">{{ $biaya->total }}</td>
+            <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: right;">Rp {{ number_format($biaya->total, 0, ',', '.') }}</td>
             <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $biaya->description }}</td>
         </tr>
         @endforeach

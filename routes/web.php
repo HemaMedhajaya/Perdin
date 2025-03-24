@@ -11,7 +11,10 @@ use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PerdinController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PermissionroleController;
 use App\Http\Controllers\RealisasiController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SubMenuController;
 use App\Http\Controllers\TravelRequestController;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +33,7 @@ Route::get('/logout', function () {
 Auth::logout(); return redirect()->route('login'); })->name('logout');
 // End
 
-Route::middleware(['check.expired', 'role:admin'])->group(function () {
+Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     Route::get('/', [UserController::class, 'dashboard'])->name('dashboard');
     // User
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -39,6 +42,7 @@ Route::middleware(['check.expired', 'role:admin'])->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::get('/users/role', [UserController::class, 'getrole'])->name('users.role');
     // End User
 
     // Karyawan
@@ -103,6 +107,26 @@ Route::middleware(['check.expired', 'role:admin'])->group(function () {
     Route::get('/biaya/{id}/edit', [BiayaController::class, 'edit'])->name('biaya.edit');
     Route::put('/biaya/{id}', [BiayaController::class, 'update'])->name('biaya.update');
     Route::delete('/biaya/{id}', [BiayaController::class, 'destroy'])->name('biaya.destroy');
+    // End Biaya
+
+    // Role
+    Route::get('/role', [RoleController::class, 'index'])->name('role.index');
+    Route::get('/role/data', [RoleController::class, 'getData'])->name('role.data');
+    Route::post('/role', [RoleController::class, 'store'])->name('role.store');
+    Route::get('/role/{id}/edit', [RoleController::class, 'edit'])->name('role.edit');
+    Route::put('/role/{id}', [RoleController::class, 'update'])->name('role.update');
+    Route::delete('/role/{id}', [RoleController::class, 'destroy'])->name('role.destroy');
+
+    Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
+    Route::get('/permission/data', [PermissionController::class, 'getData'])->name('permission.data');
+    Route::post('/permission', [PermissionController::class, 'store'])->name('permission.store');
+    Route::get('/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permission.edit');
+    Route::put('/permission/{id}', [PermissionController::class, 'update'])->name('permission.update');
+    Route::delete('/permission/{id}', [PermissionController::class, 'destroy'])->name('permission.destroy');
+    
+    Route::get('/role/permission/{id}', [PermissionroleController::class, 'index'])->name('role.permission');
+    Route::post('/permission-role/toggle', [PermissionRoleController::class, 'togglePermission'])->name('permission-role.toggle');
+
 
 });
 
@@ -147,7 +171,7 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::put('/statusapprove/realisasi/{id}', [RealisasiController::class, 'approveRealisasi'])->name('approve.realisasi');
     // End Realisasi Perjalan Dinas
     
-    Route::get('/export/perjalanan', [RealisasiController::class, 'export'])->name('export.excel');
+    Route::get('/export/realisasi/{id}', [RealisasiController::class, 'exportExcel'])->name('export.excel.realisasi');
 
     // Export PDF & Excel Perdin Sebelum Realisasi
     Route::get('/export-kasbon-pdf/{id}', [TravelRequestController::class, 'exportPDF'])->name('export.kasbon.pdf');
@@ -159,8 +183,8 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::get('/historyrealisasi/realisasi/data/{id}', [HistoryRealisasiController::class, 'getDataCombined'])->name('historyrealisasi.Combined');
 });
 
-Route::middleware(['check.expired', 'role:adminapprover'])->group(function() {
-    Route::get('/dashboardadmin', [ApprovalController::class, 'dashboard'])->name('dashboard.approver');
+Route::middleware(['check.expired', 'role:admin'])->group(function() {
+    Route::get('/dashboardadmin', [ApprovalController::class, 'dashboard'])->name('dashboardapp');
 
     Route::get('/approver', [ApprovalController::class, 'index'])->name('approver.index');
     Route::get('/approver/data', [ApprovalController::class, 'getData'])->name('approver.data');
@@ -183,5 +207,9 @@ Route::middleware(['check.expired', 'role:adminapprover'])->group(function() {
     Route::put('/approver/realisasi/{id}/update', [ApprovalController::class, 'updateTravelRequest'])->name('approveadmin.realisasi.user');
     Route::get('/approve/statusapprove/{id}', [ApprovalController::class, 'cekStatusApprove'])->name('cekapprover.admin');
     Route::get('/approve/statusapprove/{id}/detail', [ApprovalController::class, 'getDetail'])->name('cekapprover.admin.detail');
+
+    Route::get('/export-kasbon-pdf/{id}', [ApprovalController::class, 'exportPDF'])->name('export.kasbon.admin.pdf');
+    Route::get('/export-kasbon-excel/{id}', [ApprovalController::class, 'exportExcel'])->name('export.kasbon.admin.excel');
+    Route::get('/export/realisasi/admin/{id}', [ApprovalController::class, 'exportExcelRealisasi'])->name('export.excel.admin.realisasi');
 });
 

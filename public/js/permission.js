@@ -1,8 +1,8 @@
 $(document).ready(function() {
-    var table = $('#usersTable').DataTable({
+    var table = $('#roleTable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: routes.userData,
+        ajax: routes.permissionnData,
         columns: [
             { 
                 data: null, 
@@ -15,37 +15,31 @@ $(document).ready(function() {
                 }
             },
             { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+        ],
+        columnDefs: [
+            {width: "5%", targets: 0},
+            {width: "70%", targets: 1},
+            {width: "25", targets: 2}
         ]
     });
 
-    $('#addUser').click(function() {
-        $('#userId').val('');
+    $('#addPermission').click(function() {
+        $('#permissionid').val('');
         $('#name').val('');
-        $('#email').val('');
-        loadMenus()
+        $('#slug').val('');
+        $('#submenu_id').val('');
     });
 
-    function loadMenus() {
-        $.get(routes.userroleData, function(data) {
-            var options = '<option value="">Pilih Role</option>';
-            data.forEach(function(role) {
-                options += '<option value="' + role.id + '">' + role.name + '</option>';
-            });
-            $('#role_id').html(options); 
-        });
-    }
-
     $('#saveUser').click(function() {
-        var id = $('#userId').val();
-        var url = id ? '/users/' + id : '/users';
+        var id = $('#permissionid').val();
+        var url = id ? '/permission/' + id : '/permission';
         var data = {
             _token: $('meta[name="csrf-token"]').attr('content'),
             _method: id ? 'PUT' : 'POST',
             name: $('#name').val(),
-            email: $('#email').val(),
-            role_id: $('#role_id').val(),
+            slug: $('#slug').val(),
+            submenu_id: $('#submenu_id').val(),
         };
 
         $.ajax({
@@ -59,7 +53,7 @@ $(document).ready(function() {
                 if (response.gagal) {
                     toastr.error(response.gagal, "Error", { "closeButton": true, "progressBar": true });
                 }
-                $('#userModal').modal('hide');
+                $('#permissionModal').modal('hide');
                 table.ajax.reload();
             },
             error: function(xhr) {
@@ -68,32 +62,29 @@ $(document).ready(function() {
         });
     });
 
-
     $(document).on('click', '.edit-btn', function() {
         var id = $(this).data('id');
-        $.get('/users/' + id + '/edit', function(user) {
-            $('#userId').val(user.id);
-            $('#name').val(user.name);
-            $('#email').val(user.email);
-            $('#role_id').val(user.role_id);
-            $('#userModal').modal('show');
+        $.get('/permission/' + id + '/edit', function(permission) {
+            $('#permissionid').val(permission.id);
+            $('#name').val(permission.name);
+            $('#slug').val(permission.slug);
+            $('#submenu_id').val(permission.submenu_id);
+            $('#permissionModal').modal('show');
         });
     });
 
     $(document).on('click', '.delete-btn', function() {
         var id = $(this).data('id');
-        $('#deleteUserId').val(id);
+        $('#deletepermissionid').val(id);
         $('#deleteModal').modal('show');
     });
 
     $('#confirmDelete').click(function() {
-        var id = $('#deleteUserId').val();
+        var id = $('#deletepermissionid').val();
         $.ajax({
-            url: '/users/' + id,
+            url: '/permission/' + id,
             type: 'DELETE',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
+            data: { _token: $('meta[name="csrf-token"]').attr('content')},
             success: function(response) {
                 if (response.berhasil) {
                     toastr.success(response.berhasil, "Sukses", { "closeButton": true, "progressBar": true });

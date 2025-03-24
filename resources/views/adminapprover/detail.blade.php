@@ -31,6 +31,20 @@
                         
                         
                         <hr class="mt-4">
+                        <div class="col-12 d-flex justify-content-end">
+                            <div class="m-1">
+                                <a href="{{ route('export.kasbon.admin.excel', ['id' => $id]) }}" class="btn btn-outline-success">
+                                    <i class="bx bxs-file-export"></i>
+                                </a>
+                            </div>
+                            <div class="m-1">
+                                
+                                <a href="{{ route('export.kasbon.admin.pdf', ['id' => $id]) }}" class="btn btn-outline-danger ml-2">
+                                    <i class='bx bxs-file-pdf'></i>
+                                </a>
+                            </div>
+                        </div>
+                                           
                         <div class="col-12 d-flex justify-content-between">
                             <div>
                             </div>

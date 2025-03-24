@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Users')
+@section('title', 'Role')
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -7,18 +7,15 @@
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 order-0">
             <div class="card">
                 <div class="card-body">
-                    @if($data['permissionAddUser'] > 0) {{-- Tampilkan tombol jika permission > 0 --}}
-                        <button id="addUser" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">
-                            Tambah User
-                        </button>
-                    @endif
+                    <button id="addRole" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#roleModal">
+                        Tambah Role
+                    </button>
                     <div class="table-responsive" style="overflow-x: auto;">
-                        <table id="usersTable" class="table table-striped table-bordered w-100">
+                        <table id="roleTable" class="table table-striped table-bordered w-100">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>ID</th>
                                     <th>Nama</th>
-                                    <th>Email</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -30,29 +27,20 @@
     </div>
 </div>
 
+
 <!-- Modal Tambah/Edit -->
-<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+<div class="modal fade" id="roleModal" tabindex="-1" aria-labelledby="roleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="userModalLabel">Form User</h5>
+                <h5 class="modal-title" id="roleModalLabel">Form Role</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="userId">
+                <input type="hidden" id="roleid">
                 <div class="mb-2">
                     <input type="text" id="name" class="form-control" placeholder="Nama">
                 </div>
-                <div class="mb-2">
-                    <input type="email" id="email" class="form-control" placeholder="Email">
-                </div>
-                <div class="mb-2">
-                    <select name="type" id="role_id" class="form-select">
-                    </select>
-                </div>
-                {{-- <div class="mb-2">
-                    <input type="password" id="password" class="form-control" placeholder="Password">
-                </div> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -72,7 +60,7 @@
             </div>
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus user ini?</p>
-                <input type="hidden" id="deleteUserId">
+                <input type="hidden" id="deleteroleid">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -86,9 +74,8 @@
 @section('script')
 <script>
     var routes = {
-        userData : "{{ route('users.data') }}",
-        userroleData : "{{ route('users.role') }}",
+        rolenData: "{{ route('role.data') }}"
     }
 </script>
-<script src="{{ asset('js/user.js') }}"></script>
+<script src="{{ asset('js/role.js') }}"></script>
 @endsection
