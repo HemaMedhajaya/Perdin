@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-body">
                     <button id="addJabatan" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">
-                        Tambah Karyawan
+                        Tambah Jabatan
                     </button>
                     <div class="table-responsive" style="overflow-x: auto;">
                         <table id="usersTable" class="table table-striped table-bordered w-100">

@@ -19,7 +19,7 @@
                                         <th>Project</th>
                                         <th>Status Perdin</th>
                                         <th>Status Realisasi</th>
-                                        <th>Action</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                             </table>
