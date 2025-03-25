@@ -41,12 +41,6 @@
                 <div class="mb-2">
                     <input type="text" id="name" class="form-control" placeholder="Nama">
                 </div>
-                {{-- <div class="mb-2">
-                    <input type="email" id="email" class="form-control" placeholder="Email">
-                </div> --}}
-                {{-- <div class="mb-2">
-                    <input type="password" id="password" class="form-control" placeholder="Password">
-                </div> --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
