@@ -43,7 +43,7 @@ $(document).ready(function () {
             dataSrc: function(json) {
                 $('#totalKeseluruhan').text(formatRupiah(json.totalKeseluruhan));
     
-                if (json.status_approve == 5 || json.status_approve == 1) {
+                if (json.status_approve == 5 || json.status_approve == 1 || json.status_approve == 4 || json.status_approve == 6) {
                     table.column(5).visible(false);
                 } else {
                     table.column(5).visible(true); 
@@ -168,7 +168,7 @@ $(document).ready(function () {
         url: '/statusapprove/' + id,  
         type: 'GET',
         success: function (response) {
-            if (response.status_approve == 5 || response.status_approve == 1) {
+            if (response.status_approve == 5 || response.status_approve == 1 || response.status_approve == 4 || response.status_approve == 6) {
                 $('#addJabatan').addClass('hiddendetail')
             } else {
                 $('#addJabatan').removeClass('hiddendetail');
@@ -223,18 +223,20 @@ $(document).ready(function () {
         var button = $('#requestButton');
         console.log(status)
         console.log('uptdae button')
-        if (status == 0) {
+        if (status == 0 || status == 2) {
             console.log('uptdae button submit')
             button.text('Submit Request')
                 .removeClass('btn-danger')
                 .addClass('btn-success')
                 .attr('data-id', '5');
-        } else {
+        } else if (status == 5) {
             console.log('uptdae button cencel')
             button.text('Cancel Request')
                 .removeClass('btn-success')
                 .addClass('btn-danger')
                 .attr('data-id', '0');
+        } else {
+            button.addClass('hiddenbutton');
         }
     }
 

@@ -24,7 +24,18 @@ $(document).ready(function() {
         $('#userId').val('');
         $('#name').val('');
         $('#email').val('');
+        loadMenus()
     });
+
+    function loadMenus() {
+        $.get(routes.userroleData, function(data) {
+            var options = '<option value="">Pilih Role</option>';
+            data.forEach(function(role) {
+                options += '<option value="' + role.id + '">' + role.name + '</option>';
+            });
+            $('#role_id').html(options); 
+        });
+    }
 
     $('#saveUser').click(function() {
         var id = $('#userId').val();
@@ -34,6 +45,7 @@ $(document).ready(function() {
             _method: id ? 'PUT' : 'POST',
             name: $('#name').val(),
             email: $('#email').val(),
+            role_id: $('#role_id').val(),
         };
 
         $.ajax({
@@ -63,6 +75,7 @@ $(document).ready(function() {
             $('#userId').val(user.id);
             $('#name').val(user.name);
             $('#email').val(user.email);
+            $('#role_id').val(user.role_id);
             $('#userModal').modal('show');
         });
     });
@@ -78,7 +91,9 @@ $(document).ready(function() {
         $.ajax({
             url: '/users/' + id,
             type: 'DELETE',
-            _token: $('meta[name="csrf-token"]').attr('content'),
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(response) {
                 if (response.berhasil) {
                     toastr.success(response.berhasil, "Sukses", { "closeButton": true, "progressBar": true });

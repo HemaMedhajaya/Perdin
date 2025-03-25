@@ -11,9 +11,9 @@ class User extends Authenticatable implements JWTSubject  // Implementasikan JWT
 {
     use HasFactory, Notifiable;
 
-    const ROLE_ADMIN = 'admin';
-    const ROLE_USER = 'user';
-    const ROLE_ADMIN_APPROVER ='adminapprover';
+    const ROLE_ADMIN = 1;
+    const ROLE_USER = 3;
+    const ROLE_ADMIN_APPROVER = 2;
 
     /**
      * The attributes that are mass assignable.

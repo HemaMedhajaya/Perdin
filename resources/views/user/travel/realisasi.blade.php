@@ -10,14 +10,14 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Data Perjalanan Dinas</h5>
                     <div class="d-flex gap-2">
-                        <a href="{{ route('export.excel') }}" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="Excel">
+                        <a href="{{ route('export.excel.realisasi', ['id' => $id]) }}" class="btn btn-outline-success" data-toggle="tooltip" data-placement="top" title="Excel">
                             <i class="bx bxs-file-export"></i>
                         </a>
                         <button id="exportPDF" class="btn btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Pdf">
                             <i class='bx bxs-file-pdf'></i>
                         </button>
-                        <button id="saveData" class="btn btn-success">
-                            Simpan
+                        <button id="saveData" class="btn btn-success" data-id="">
+                            Submit Request
                         </button>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                             <thead class="thead-dark">
                                 <tr>
                                     <th colspan="4" class="text-center">Data Sebelum Realisasi</th>
-                                    <th colspan="5" class="text-center">Data Setelah Realisasi</th>
+                                    <th colspan="6" class="text-center">Data Setelah Realisasi</th>
                                 </tr>
                                 <tr>
                                     <th>No</th>
@@ -42,6 +42,7 @@
                                     <th>Jenis</th>
                                     <th>Deskripsi</th>
                                     <th>Total</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -52,7 +53,7 @@
                                     <th class="text-right" id="totalSebelum"></th>
                                     <th colspan="3" class="text-right">TOTAL KESELURUHAN</th>
                                     <th class="text-right" id="totalSesudah"></th>
-                                    <th></th>
+                                    <th colspan="2"></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -121,6 +122,26 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <button id="confirmDelete" class="btn btn-danger">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Submit Request --}}
+<div class="modal fade" id="submitRequestModal" tabindex="-1" aria-labelledby="submitRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="submitRequestModalLabel">Konfirmasi Submit Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin mengirim realisasi ini?</p>
+                <input type="hidden" id="requestId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button id="confirmSubmit"  data-idrequesttravel="{{ $id }}" class="btn btn-success">Submit</button>
             </div>
         </div>
     </div>

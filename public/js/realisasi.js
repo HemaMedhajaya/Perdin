@@ -9,7 +9,7 @@ $(document).ready(function () {
         $('[name="total"]').val(total); 
     }
 
-    function getTravelRequestIdFromUrl() {
+    function getTravelRePquestIdFromUrl() {
         const url = window.location.href; 
         const parts = url.split('/'); 
         return parts[parts.length - 1];
@@ -44,8 +44,15 @@ $(document).ready(function () {
         ajax: {
             url: '/perdin/' + id + '/detail-combined',
             dataSrc: function(json) {
+                console.log(json.status_approve_realisasi);
                 $('#totalSebelum').text(formatRupiah(json.totalKeseluruhan));
-                $('#totalSesudah').text(formatRupiah(json.totalSesudah)); // Menampilkan total setelah realisasi
+                $('#totalSesudah').text(formatRupiah(json.totalSesudah));
+                if (json.status_approve_realisasi == 2 || json.status_approve_realisasi == 4) {
+                    table.column(9).visible(false);
+                } else {
+                    table.column(9).visible(true);
+                }
+            
                 return json.data;
             }
         },
@@ -85,6 +92,7 @@ $(document).ready(function () {
                     return data ? formatRupiah(data) : '-';
                 }
             },
+            { data: 'status_approve_realisasi', name: 'status_approve_realisasi', orderable: false, searchable: false, className: 'text-center' },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
         ]
     });
@@ -203,6 +211,19 @@ $(document).ready(function () {
         </div>`;
     }
 
+    $.ajax({
+        url: '/statusapprovedetail/' + id,  
+        type: 'GET',
+        success: function (response) {
+            if (response.status_approve_realisasi == 2 || response.status_approve_realisasi == 4) {
+                $('#addJabatan').addClass('hiddenbutton')
+            } else {
+                $('#addJabatan').removeClass('hiddenbutton');
+            }
+            updateButton(response.status_approve_realisasi); 
+        }
+    });
+
     $(document).on('click', '.delete-btn', function () {
         var id = $(this).data('id');
         $('#deleterealisasi').val(id);
@@ -235,5 +256,72 @@ $(document).ready(function () {
             }
         });
     });
+
+    $('#saveData').click(function () {
+        var idtravel = $(this).attr('data-id');
+        console.log(idtravel);
+        $('#requestId').val(idtravel);
+        $('#submitRequestModal').modal('show');
+    })
+
+    $('#confirmSubmit').click(function () {
+        var idreques = $('#requestId').val();
+        var idtravelrequest = $(this).attr('data-idrequesttravel');
+        console.log(idtravelrequest);
+        console.log(2);
+        $.ajax({
+            url: '/statusapprove/realisasi/' + idtravelrequest,
+            type:'PUT',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                idrequest: idreques,
+            },
+            success: function (response) {
+                if (response.berhasil) {
+                    toastr.success(response.berhasil, "Sukses", {
+                        "closeButton": true,
+                        "progressBar": true
+                    });
+                }
+                if (response.gagal) {
+                    toastr.error(response.gagal, "Error", {
+                        "closeButton": true,
+                        "progressBar": true
+                    });
+                }
+                $('#submitRequestModal').modal('hide');
+                table.ajax.reload();
+                updateButton(response.status_approve_realisasi);
+                console.log(response.status_approve_realisasi)
+                if (response.status_approve_realisasi == 2) {
+                    $('#addJabatan').addClass('hiddenbutton')
+                } else {
+                    $('#addJabatan').removeClass('hiddenbutton');
+                }
+            }
+        });
+    })
+
+    function updateButton(status) {
+        var button = $('#saveData');
+        console.log(status);
+        console.log('sampai');
+        console.log('uptdae button');
+        if (status == 1 || status == 3) {
+            console.log('uptdae button submit')
+            button.text('Submit Request')
+                .removeClass('btn-danger')
+                .addClass('btn-success')
+                .attr('data-id', '2');
+        } else if (status == 4) {
+            button.addClass('hiddenbutton')
+        } else{
+            console.log('uptdae button cencel')
+            button.text('Cancel Request')
+                .removeClass('btn-success')
+                .addClass('btn-danger')
+                .attr('data-id', '1');
+        }
+    }
 
 });

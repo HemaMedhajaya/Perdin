@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PermissionRole;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,7 +25,8 @@ class UserController extends Controller
     }
     public function index()
     {
-        return view('admin.user.index');
+        $data['permissionAddUser'] = PermissionRole::getPermission('Add User', Auth::user()->role);
+        return view('admin.user.index',['data' => $data]);
     }
 
     public function dashboard()
@@ -33,20 +36,38 @@ class UserController extends Controller
 
     public function getData()
     {
+        $permissionEditUser = PermissionRole::getPermission('Edit User', Auth::user()->role);
+        $permissionDeleteUser = PermissionRole::getPermission('Delete User', Auth::user()->role);
+
         return DataTables::of(User::query())
-            ->addColumn('action', function ($user) {
-                return '
-                    <button class="btn btn-sm btn-primary edit-btn" data-id="' . $user->id . '">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="' . $user->id . '">
-                        <i class="fas fa-trash-alt"></i> Hapus
-                    </button>
-                ';
+            ->addColumn('action', function ($user) use ($permissionEditUser, $permissionDeleteUser) {
+                $editButton = '';
+                $deleteButton = '';
+
+                // Cek permission untuk Edit User
+                if ($permissionEditUser > 0) {
+                    $editButton = '
+                        <button class="btn btn-sm btn-primary edit-btn" data-id="' . $user->id . '">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    ';
+                }
+
+                // Cek permission untuk Delete User
+                if ($permissionDeleteUser > 0) {
+                    $deleteButton = '
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="' . $user->id . '">
+                            <i class="fas fa-trash-alt"></i> Hapus
+                        </button>
+                    ';
+                }
+
+                return $editButton . ' ' . $deleteButton;
             })
             ->rawColumns(['action'])
             ->make(true);
     }
+
 
     public function store(Request $request)
     {
@@ -58,6 +79,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role_id' => $request->role_id,
         ]);
 
         UserActivityLog::create([
@@ -91,6 +113,7 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'role_id' => $request->role_id,
         ]);
 
         UserActivityLog::create([
@@ -106,5 +129,11 @@ class UserController extends Controller
     {
         User::destroy($id);
         return response()->json(['berhasil' => 'User berhasil dihapus!']);
+    }
+
+    public function getrole()
+    {
+        $role = Role::all();
+        return response()->json($role);
     }
 }

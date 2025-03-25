@@ -77,49 +77,65 @@
           <div class="menu-inner-shadow"></div>
 
             <ul class="menu-inner py-1">
-              @foreach($menus as $menu)
-                @php
-                    // Cek apakah menu ini aktif
-                    $isActive = Request::routeIs($menu->route) || Request::is($menu->route . '*');
-            
-                    // Jika menu ini adalah "Perjalanan Dinas", pastikan juga aktif saat membuka halaman details
-                    if ($menu->route === 'perdin.index' && Request::is('perdin/*')) {
-                        $isActive = true;
-                    } elseif ($menu->route === 'historyrealisasi.index' && Request::is('historyrealisasi/*')) {
-                      $isActive = true;
-                    }
+              @php
+                  function isActiveMenu($menu) {
+                      return ($menu->is_parent && $menu->subMenus->count() > 0 && $menu->subMenus->contains(function($subMenu) {
+                          return Request::is($subMenu->route . '*') || Request::routeIs($subMenu->route);
+                      })) || (!$menu->is_parent && (Request::is($menu->route . '*') || Request::routeIs($menu->route)));
+                  }
+              @endphp
 
-            
-                    // Set class 'active open' jika menu ini aktif
-                    $activeClass = $isActive ? 'active open' : '';
-                @endphp
-            
-                <li class="menu-item {{ $activeClass }}">
-                    @if($menu->is_parent)
-                        <!-- Menu induk -->
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="{{ $menu->icon }}"></i>
-                            <div class="text-truncate">{{ $menu->name }}</div>
-                        </a>
-                        <ul class="menu-sub">
-                            @foreach($menu->subMenus as $subMenu)
-                                <li class="menu-item {{ Request::is($subMenu->route . '*') ? 'active' : '' }}">
-                                    <a href="{{ route($subMenu->route) }}" class="menu-link">
-                                        <div class="text-truncate">{{ $subMenu->name }}</div>
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <!-- Menu tunggal -->
-                        <a href="{{ route($menu->route) }}" class="menu-link">
-                            <i class="{{ $menu->icon }}"></i>
-                            <div class="text-truncate">{{ $menu->name }}</div>
-                        </a>
-                    @endif
-                </li>
-            @endforeach          
-            </ul>
+              {{-- Tambahkan Menu Tunggal --}}
+              @foreach($singleMenus as $singleMenu)
+              @php
+                  // Ambil permission untuk menu tunggal
+                  $permission = App\Models\PermissionRole::getPermission($singleMenu->name, Auth::user()->role);
+              @endphp
+
+              @if($permission > 0) {{-- Tampilkan menu jika permission > 0 --}}
+                  <li class="menu-item 
+                      {{ 
+                          Request::routeIs($singleMenu->route) || 
+                          Request::is(ltrim($singleMenu->route, '/') . '*') ||
+                          (Str::contains($singleMenu->route, 'perdin') && Str::contains(Request::path(), 'perdin')) ||
+                          (Str::contains($singleMenu->route, 'realisasi') && Str::contains(Request::path(), 'realisasi'))
+                          ? 'active' 
+                          : '' 
+                      }}">
+                      <a href="{{ route($singleMenu->route) }}" class="menu-link">
+                          <i class="{{ $singleMenu->icon }}"></i>
+                          <div class="text-truncate">{{ $singleMenu->name }}</div>
+                      </a>
+                  </li>
+              @endif
+              @endforeach
+
+              {{-- Menu dengan Submenu --}}
+              @foreach($menus as $menu)
+                  <li class="menu-item {{ isActiveMenu($menu) ? 'active open' : '' }}">
+                      @if($menu->is_parent)
+                          <a href="javascript:void(0);" class="menu-link menu-toggle">
+                              <i class="{{ $menu->icon }}"></i>
+                              <div class="text-truncate">{{ $menu->name }}</div>
+                          </a>
+                          <ul class="menu-sub">
+                              @foreach($menu->subMenus as $subMenu)
+                                  <li class="menu-item {{ Request::is($subMenu->route . '*') || Request::routeIs($subMenu->route) ? 'active' : '' }}">
+                                      <a href="{{ route($subMenu->route) }}" class="menu-link">
+                                          <div class="text-truncate">{{ $subMenu->name }}</div>
+                                      </a>
+                                  </li>
+                              @endforeach
+                          </ul>
+                      @else
+                          <a href="{{ route($menu->route) }}" class="menu-link">
+                              <i class="{{ $menu->icon }}"></i>
+                              <div class="text-truncate">{{ $menu->name }}</div>
+                          </a>
+                      @endif
+                  </li>
+              @endforeach
+          </ul>
         </aside>
         <!-- / Menu -->
 

@@ -22,15 +22,44 @@ $(document).ready(function () {
                 searchable: false, 
                 className: 'text-center'
             },
+            { 
+                data: 'status_and_action_realisasi', 
+                name: 'status_and_action_realisasi', 
+                orderable: false, 
+                searchable: false, 
+                className: 'text-center'
+            },
             { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
         ],
         columnDefs: [
             { width: "5%", targets: 0 }, 
-            { width: "60%", targets: 1 },
+            { width: "40%", targets: 1 },
             { width: "10%", targets: 2 },
-            { width: "20%", targets: 3 }  
+            { width: "10%", targets: 3 },
+            { width: "20%", targets: 4 }  
         ]
     });
+
+    $(document).on('click', '#komentarreject', function () {
+        var id = $(this).data('id'); 
+        $.ajax({
+            url: '/komentar/' + id, 
+            type: 'GET', 
+            success: function (response) {
+                if (response.komentar) {
+                    $('#komentarText').val(response.komentar);
+                    $('#komentarshow').modal('show');
+                } else {
+                    console.error('Komentar tidak ditemukan');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Terjadi kesalahan:', error);
+            }
+        });
+    });
+    
+    
 
     $('#addPerdin').click(function () {
         $('#perdinid').val('');
@@ -259,5 +288,7 @@ $(document).ready(function () {
             }
         });
     });
+
+    
     
 });

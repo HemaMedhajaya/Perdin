@@ -1,9 +1,10 @@
-<?php 
+<?php
 namespace App\Providers;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Menu;
+use App\Models\SubMenu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,18 +14,29 @@ class AppServiceProvider extends ServiceProvider
             $role = session('role');
 
             $type = 0;
-            if ($role === 'admin') {
-                $type = 1; // Admin
-            } elseif ($role === 'adminapprover') {
-                $type = 2; // Admin Approver
+            if ($role === 1) {
+                $type = 1; 
+            } elseif ($role === 2) {
+                $type = 2; 
+            } elseif ($role === 3) {
+                $type = 0;
             }
 
-            $menus = Menu::with('subMenus')
+            // Ambil menu utama berdasarkan type
+            $menus = Menu::with(['subMenus' => function ($query) {
+                $query->where('type_menu', '!=', 0); // Ambil submenus yang bukan menu tunggal
+            }])->where('type', $type)->get();
+
+            // Ambil subMenus dengan type_menu = 0 sebagai menu tunggal
+            $singleMenus = SubMenu::where('type_menu', 0)
                 ->where('type', $type)
                 ->get();
 
-            // Share data menu ke view
-            $view->with('menus', $menus);
+            // Share data ke view
+            $view->with([
+                'menus' => $menus,
+                'singleMenus' => $singleMenus,
+            ]);
         });
     }
 }

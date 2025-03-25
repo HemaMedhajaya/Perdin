@@ -12,7 +12,12 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        if (!Auth::check() || Auth::user()->role !== $role) {
+        $roles = [
+            'superadmin' => 1,
+            'admin' => 2,
+            'user' => 3
+        ];
+        if (!Auth::check() || Auth::user()->role !== $roles[$role]) {
             return back()->with('gagal', 'Akses ditolak! Anda tidak memiliki izin.');
         }
         return $next($request);

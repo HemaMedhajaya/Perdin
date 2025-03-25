@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TravelRequest extends Model
 {
-    protected $fillable = ['user_id', 'start_date', 'end_date', 'destination', 'purpose', 'name_project','nomorso','lokasikerja','keperluan','status_approve','comentar'];
+    protected $fillable = ['user_id', 'start_date', 'end_date', 'destination', 'purpose', 'name_project','nomorso','lokasikerja','keperluan','status_approve','comentar','status_approve_realisasi'];
 
     public function participants()
     {

@@ -7,7 +7,11 @@
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 order-0">
             <div class="card">
                 <div class="card-body">
-                    <button id="addUser" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">Tambah User</button>
+                    @if($data['permissionAddUser'] > 0) {{-- Tampilkan tombol jika permission > 0 --}}
+                        <button id="addUser" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">
+                            Tambah User
+                        </button>
+                    @endif
                     <div class="table-responsive" style="overflow-x: auto;">
                         <table id="usersTable" class="table table-striped table-bordered w-100">
                             <thead class="thead-dark">
@@ -41,6 +45,10 @@
                 </div>
                 <div class="mb-2">
                     <input type="email" id="email" class="form-control" placeholder="Email">
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="role_id" class="form-select">
+                    </select>
                 </div>
                 {{-- <div class="mb-2">
                     <input type="password" id="password" class="form-control" placeholder="Password">
@@ -79,6 +87,7 @@
 <script>
     var routes = {
         userData : "{{ route('users.data') }}",
+        userroleData : "{{ route('users.role') }}",
     }
 </script>
 <script src="{{ asset('js/user.js') }}"></script>

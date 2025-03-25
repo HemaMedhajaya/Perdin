@@ -18,7 +18,8 @@
                                     <th>ID</th>
                                     <th>User</th>
                                     <th>Project</th>
-                                    <th>Status</th>
+                                    <th>Status Perdin</th>
+                                    <th>Status Realisasi</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>

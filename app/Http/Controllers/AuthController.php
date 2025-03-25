@@ -70,7 +70,8 @@ class AuthController extends Controller
 
                     session()->put('email', $user->email);
                     session()->put('user_id', $user->id);
-                    $role = session()->get('role','user');
+                    $role = session()->get('role',3);
+                    
 
                     if ($role === User::ROLE_ADMIN){
                         return redirect()->route('dashboard')->with([
@@ -78,11 +79,12 @@ class AuthController extends Controller
                             'berhasil' => 'Berhasil Login'
                         ]);
                     } elseif ($role === User::ROLE_ADMIN_APPROVER) {
-                        return redirect()->route('dashboard.approver')->with([
+                        return redirect()->route('dashboardapp')->with([
                             'token' => $token,
                             'berhasil' => 'Berhasil Login'
                         ]);
                     } else {
+                        // dd($role);
                         return redirect()->route('index.dashboard')->with([
                             'token' => $token,
                             'berhasil' => 'Berhasil Login'
