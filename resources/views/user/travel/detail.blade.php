@@ -104,7 +104,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Biaya</label>
-                            <input type="number" name="biaya" class="form-control mb-2" placeholder="Biaya">
+                            <input type="number" name="biaya" id="biaya" class="form-control mb-2" placeholder="Biaya">
                             <label class="form-label">Qty</label>
                             <input type="number" name="qty" class="form-control mb-2" placeholder="Qty">
                         <label class="form-label">Man</label>

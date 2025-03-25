@@ -60,7 +60,7 @@
             <th>Name</th>
             <td>{{ $name }}</td>
             <th>Tanggal Pengajuan</th>
-            <td colspan="2">15 October 2024</td>
+            <td colspan="2">{{ $tanngal_perdin }}</td>
         </tr>
 
         <tr>

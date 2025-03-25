@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\TravelRequest;
 use App\Models\UserMatrixApprovals;
 use Auth;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -95,7 +96,17 @@ class TravelRequestController extends Controller
                         ';
                     }
 
-                    return $statusHtml . ' ' . $actionRealisasiHtml;
+                    if ($data->status_approve_realisasi == 3) {
+                        $actionreject = '
+                            <button type="button" id="komentarreject" class="btn btn-sm btn-link" data-id="' . $data->id . '" data-toggle="tooltip" data-placement="top" title="Komentar">
+                                <i class="bx bx-show"></i>
+                            </button>
+                        ';
+                    } else {
+                        $actionreject = '';
+                    }
+
+                    return $statusHtml . ' ' . $actionRealisasiHtml . ' ' . $actionreject;
 
                 })
                 ->addColumn('action', function ($data) use ($permissionEditPerjalananDinas, $permissionDeletePerjalananDinas) {
@@ -427,7 +438,7 @@ class TravelRequestController extends Controller
             'man' => $request->man,
             'total' => $request->total,
             'description' => $request->keterangan,
-            'jenis_perjalanan' => ($request->jenis_biaya === 'transportasi') ? 1 : 0, // 1 untuk transportasi, 0 untuk akomodasi
+            'jenis_perjalanan' => $request->jenis_biaya, // 1 untuk transportasi, 0 untuk akomodasi
         ];
 
         if ($id) {
@@ -535,6 +546,7 @@ class TravelRequestController extends Controller
             'penanggung_jawab' => $data1->penanggungjawab->user->name,
             'estimasi_biaya' => $data1->expenses,
             'total_cash_advance' => $total,
+            'tanngal_perdin' => Carbon::parse($data1->created_at)->translatedFormat('d F Y'),
             'terbilang' => 'EMPAT BELAS JUTA RUPIAH',
             'pembon' => [
                 'pemohon' => $data1->karyawan->user->name,

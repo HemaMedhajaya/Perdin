@@ -132,60 +132,6 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <hr class="mt3"> --}}
-                    {{-- <div class="mb-2">
-                        <div id="transportasi-container">
-                            <div class="transportasi-item row">
-                                <div class="col-md-6">
-                                    <label for="deskripsi" class="form-label">Deskripsi</label>
-                                    <input type="text" name="transportasi[deskripsi][]" class="form-control mb-2" placeholder="Deskripsi" id="deskripsi">
-                                    
-                                    <label for="biaya" class="form-label">Biaya</label>
-                                    <input type="number" name="transportasi[biaya][]" class="form-control mb-2" placeholder="Biaya" id="biaya">
-                                    
-                                    <label for="qty" class="form-label">Qty</label>
-                                    <input type="number" name="transportasi[qty][]" class="form-control mb-2" placeholder="Qty" id="qty">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="total" class="form-label">Total</label>
-                                    <input type="number" name="transportasi[total][]" class="form-control mb-2" placeholder="Total" readonly id="total">
-                                    
-                                    <label for="keterangan" class="form-label">Keterangan</label>
-                                    <textarea name="transportasi[keterangan][]" class="form-control mb-2" placeholder="Keterangan" id="keterangan"></textarea>
-                                    
-                                    <input type="hidden" name="transportasi[jenis_perjalanan][]" value="1">
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" id="addTransportasi" class="btn btn-primary mt-3">Tambah Transportasi</button>
-                    </div>
-                    <div class="mb-2">
-                        <div id="akomodasi-container">
-                            <div class="akomodasi-item row">
-                                <div class="col-md-6">
-                                    <label for="deskripsi" class="form-label">Deskripsi</label>
-                                    <input type="text" name="akomodasi[deskripsi][]" class="form-control mb-2"
-                                        placeholder="Deskripsi">
-                                    <label for="biaya" class="form-label">Biaya</label>
-                                    <input type="number" name="akomodasi[biaya][]" class="form-control mb-2"
-                                        placeholder="Biaya">
-                                    <label for="qty" class="form-label">Qty</label>
-                                    <input type="number" name="akomodasi[qty][]" class="form-control mb-2"
-                                        placeholder="Qty">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="total" class="form-label">Total</label>
-                                    <input type="number" name="akomodasi[total][]" class="form-control mb-2"
-                                        placeholder="Total" readonly>
-                                    <label for="keterangan" class="form-label">Keterangan</label>
-                                    <textarea name="akomodasi[keterangan][]" class="form-control mb-2" placeholder="Keterangan"></textarea>
-                                    <input type="hidden" name="akomodasi[jenis_perjalanan][]" value="0">
-                                    <!-- Status Akomodasi -->
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" id="addAkomodasi" class="btn btn-primary mt-3">Tambah Akomodasi</button>
-                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

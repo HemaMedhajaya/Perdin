@@ -94,6 +94,8 @@
                         <input type="number" name="biaya" class="form-control mb-2" placeholder="Biaya">
                         <label class="form-label">Qty</label>
                         <input type="number" name="qty" class="form-control mb-2" placeholder="Qty">
+                        <label class="form-label">Man</label>
+                        <input type="number" name="man" class="form-control mb-2" placeholder="Man">
                         <label class="form-label">Total</label>
                         <input type="number" name="total" class="form-control mb-2" placeholder="Total" readonly>
                     </div>

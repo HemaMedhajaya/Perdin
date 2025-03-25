@@ -33,9 +33,9 @@ $(document).ready(function () {
         ],
         columnDefs: [
             { width: "5%", targets: 0 }, 
-            { width: "40%", targets: 1 },
+            { width: "35%", targets: 1 },
             { width: "10%", targets: 2 },
-            { width: "10%", targets: 3 },
+            { width: "15%", targets: 3 },
             { width: "20%", targets: 4 }  
         ]
     });
@@ -219,29 +219,25 @@ $(document).ready(function () {
             });
 
             $.get(routes.perdinUserPJ, function (data) {
-                let options = "";
                 let selectedUsers = perdin.participants.map(p => p.user_id);
-
-                // Ambil user_id dari penanggungjawab (dari elemen pertama dalam array)
-                let selectedUserPJ = (perdin.penanggungjawab && perdin.penanggungjawab.length > 0) ? perdin.penanggungjawab[0].user_id : null;
-
-                // Loop untuk menambahkan semua opsi user
-                data.forEach(user => {
-                    let isSelected = selectedUsers.includes(user.id) ? "selected" : "";
-                    options += `<option value="${user.id}" ${isSelected}>${user.name}</option>`;
-                });
-
-                // Set options ke dalam elemen select
+                console.log(selectedUsers);
+            
+                // Ambil user_id dari penanggungjawab
+                let selectedUserPJ = Array.isArray(perdin.penanggungjawab) && perdin.penanggungjawab.length > 0 
+                    ? perdin.penanggungjawab[0].user_id 
+                    : perdin.penanggungjawab?.user_id || null;
+            
+                // Generate opsi user
+                let options = data.map(user => 
+                    `<option value="${user.id}" ${selectedUsers.includes(user.id) ? "selected" : ""}>${user.name}</option>`
+                ).join("");
+            
+                // Set opsi ke dalam select
                 $("#user_id, #userpj_id").html(options);
-
-                // Jika selectedUserPJ ada, set sebagai nilai default di #userpj_id
-                if (selectedUserPJ) {
-                    $("#userpj_id").val(selectedUserPJ).trigger('change');
-                } else {
-                    // Jika penanggungjawab kosong, biarkan #userpj_id tidak terpilih
-                    $("#userpj_id").val(null).trigger('change');
-                }
-
+            
+                // Set nilai default untuk userpj_id
+                $("#userpj_id").val(selectedUserPJ || "").trigger('change');
+            
                 // Inisialisasi Select2
                 $("#user_id, #userpj_id").select2({
                     placeholder: "Pilih User",
@@ -249,8 +245,8 @@ $(document).ready(function () {
                     width: "100%",
                     dropdownParent: $("#user_id").parent()
                 });
-
             });
+            
 
         });
     });
