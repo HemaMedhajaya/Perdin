@@ -20,6 +20,7 @@ class TravelExpense extends Model
         'description_realisasi',
         'cost_realisasi',
         'quantity_realisasi',
+        'man_realisasi',
         'total_realisasi',
         'transportation_realisasi'
     ];

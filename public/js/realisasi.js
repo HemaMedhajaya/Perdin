@@ -5,7 +5,8 @@ $(document).ready(function () {
     function calculateTotal() {
         const biaya = parseFloat($('[name="biaya"]').val()) || 0; 
         const qty = parseFloat($('[name="qty"]').val()) || 0;
-        const total = biaya * qty;
+        const man = parseFloat($('[name="man"]').val()) || 0;
+        const total = biaya * qty * man;
         $('[name="total"]').val(total); 
     }
 
@@ -17,7 +18,7 @@ $(document).ready(function () {
 
     $(document).ready(function () {
         $('#addJabatan').click(function () {
-            const travelRequestId = getTravelRequestIdFromUrl();
+            const travelRequestId = getTravelRePquestIdFromUrl();
             $('#travelrequestid').val(travelRequestId);
             $('select[name="jenis_biaya"]').val(''); 
             $('#idrealisasi').val('');
@@ -26,10 +27,11 @@ $(document).ready(function () {
             $('input[name="biaya"]').val(''); 
             $('input[name="qty"]').val('');
             $('input[name="total"]').val('');
+            $('input[name="man"]').val('');
         });
     });
     
-    $(document).on('input', '[name="biaya"], [name="qty"]', function () {
+    $(document).on('input', '[name="biaya"], [name="qty"], [name="man"]', function () {
         calculateTotal();
     });
 
@@ -117,16 +119,16 @@ $(document).ready(function () {
             biaya: $('input[name="biaya"]').val(), 
             qty: $('input[name="qty"]').val(),
             total: $('input[name="total"]').val(),
+            man: $('input[name="man"]').val(),
         };
     
-        // Jika method adalah PUT, tambahkan _method
         if (method === 'PUT') {
-            data._method = 'PUT'; // Method override untuk Laravel
+            data._method = 'PUT'; 
         }
     
         $.ajax({
             url: url,
-            type: 'POST', // Selalu gunakan POST (method override untuk PUT)
+            type: 'POST', 
             data: data,
             success: function (response) {
                 if (response.berhasil) {
@@ -141,8 +143,8 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#biayaModal').modal('hide'); // Tutup modal
-                table.ajax.reload(); // Reload tabel (jika menggunakan DataTables)
+                $('#biayaModal').modal('hide'); 
+                table.ajax.reload(); 
             },
             error: function (xhr) {
                 toastr.error("Terjadi kesalahan!", "Error", {
@@ -166,51 +168,12 @@ $(document).ready(function () {
             $('input[name="biaya"]').val(detail.cost); 
             $('input[name="qty"]').val(detail.quantity);
             $('input[name="total"]').val(detail.total); 
+            $('input[name="man"]').val(detail.man); 
         
             $('#biayaModal').modal('show');
         });
     });
     
-    function generateTransportasiItem(expense) {
-        return `<div class="transportasi-item row position-relative mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Deskripsi</label>
-                <input type="text" name="transportasi[deskripsi]" class="form-control mb-2" value="${expense.transportation}" placeholder="Deskripsi">
-                <label class="form-label">Biaya</label>
-                <input type="number" name="transportasi[biaya]" class="form-control mb-2" value="${expense.cost}" placeholder="Biaya">
-                <label class="form-label">Qty</label>
-                <input type="number" name="transportasi[qty]" class="form-control mb-2" value="${expense.quantity}" placeholder="Qty">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Total</label>
-                <input type="number" name="transportasi[total]" class="form-control mb-2" value="${expense.total}" placeholder="Total" readonly>
-                <label class="form-label">Keterangan</label>
-                <textarea name="transportasi[keterangan]" class="form-control mb-2" placeholder="Keterangan">${expense.description}</textarea>
-                <input type="hidden" name="transportasi[jenis_perjalanan]" value="1">
-            </div>
-        </div>`;
-    }
-    
-    function generateAkomodasiItem(expense) {
-        return `<div class="akomodasi-item row position-relative mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Deskripsi</label>
-                <input type="text" name="akomodasi[deskripsi]" class="form-control mb-2" value="${expense.transportation}" placeholder="Deskripsi">
-                <label class="form-label">Biaya</label>
-                <input type="number" name="akomodasi[biaya]" class="form-control mb-2" value="${expense.cost}" placeholder="Biaya">
-                <label class="form-label">Qty</label>
-                <input type="number" name="akomodasi[qty]" class="form-control mb-2" value="${expense.quantity}" placeholder="Qty">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Total</label>
-                <input type="number" name="akomodasi[total]" class="form-control mb-2" value="${expense.total}" placeholder="Total" readonly>
-                <label class="form-label">Keterangan</label>
-                <textarea name="akomodasi[keterangan]" class="form-control mb-2" placeholder="Keterangan">${expense.description}</textarea>
-                <input type="hidden" name="akomodasi[jenis_perjalanan]" value="0">
-            </div>
-        </div>`;
-    }
-
     $.ajax({
         url: '/statusapprovedetail/' + id,  
         type: 'GET',

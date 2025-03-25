@@ -70,6 +70,7 @@ class RealisasiController extends Controller
             'biaya' => 'required|numeric',
             'qty' => 'required|integer|min:1',
             'total' => 'required|numeric',
+            'man' => 'required|numeric',
         ]);
 
         TravelExpense::create([
@@ -79,7 +80,8 @@ class RealisasiController extends Controller
             'cost_realisasi' => $request->biaya,
             'quantity_realisasi' => $request->qty,
             'total_realisasi' => $request->total,
-            'transportation_realisasi' => $request->deskripsi
+            'transportation_realisasi' => $request->deskripsi,
+            'man_realisasi' => $request->man,
         ]);
 
         return response()->json([
@@ -104,6 +106,7 @@ class RealisasiController extends Controller
             'cost' => $data->cost_realisasi ?? $data->cost,
             'quantity' => $data->quantity_realisasi ?? $data->quantity,
             'total' => $data->total_realisasi ?? $data->total,
+            'man' => $data->man_realisasi ?? $data->man,
         ];
 
         return response()->json($response);
@@ -119,6 +122,7 @@ class RealisasiController extends Controller
             'biaya' => 'required|numeric',
             'qty' => 'required|integer|min:1',
             'total' => 'required|numeric',
+            'man' => 'required|numeric',
         ]);
         $travelExpense = TravelExpense::find($id);
 
@@ -129,7 +133,8 @@ class RealisasiController extends Controller
                 'cost_realisasi' => $request->biaya,
                 'quantity_realisasi' => $request->qty,
                 'total_realisasi' => $request->total,
-                'transportation_realisasi' => $request->deskripsi
+                'transportation_realisasi' => $request->deskripsi,
+                'man_realisasi' => $request->man,
             ]);
         }
         return response()->json(['berhasil' => 'Biaya perjalanan dinas berhasil diperbarui!']);
@@ -158,13 +163,14 @@ class RealisasiController extends Controller
                 $query->where('te.travel_request_id', $id)
                     ->orWhere('te.travel_request_id_realisasi', $id);
             })
-            ->select('te.*', 'tr.status_approve_realisasi as status_approve_realisasi')
+            ->select(
+                'te.*',
+                DB::raw('COALESCE(tr.status_approve_realisasi, tr_realisasi.status_approve_realisasi) as status_approve_realisasi')
+            )
             ->get();
 
-        // Hitung Total Keseluruhan Sebelum Realisasi
         $totalSebelum = $dataSebelum->sum('total');
 
-        // Hitung Total Keseluruhan Setelah Realisasi
         $totalSesudah = $dataSesudah->sum(function($item) {
             return $item->total_realisasi ?? $item->total;
         });

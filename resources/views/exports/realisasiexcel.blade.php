@@ -34,7 +34,9 @@
                 </td>
                 <td style="border: 1px solid black; text-align: center; font-size: 6px; ">{{ $item['sebelum'] ? $item['sebelum']->man : '' }}</td>
                 <td style="border: 1px solid black; text-align: center; font-size: 6px; ">{{ $item['sebelum'] ? $item['sebelum']->quantity : '' }}</td>
-                <td style="border: 1px solid black; text-align: center; font-size: 6px; ">Rp {{ $item['sebelum'] ? number_format($item['sebelum']->total, 0, ',', '.') : '' }}</td>
+                <td style="border: 1px solid black; text-align: center; font-size: 6px;">
+                    {{ isset($item['sebelum']->total) ? 'Rp ' . number_format($item['sebelum']->total, 0, ',', '.') : '' }}
+                </td>
         
                 <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;" >
                     {{ $loop->first && $item['sebelum'] ? 'Rp ' . number_format($totalsebelum, 0, ',', '.') : '' }}
@@ -48,8 +50,8 @@
                     {{ $loop->first && $item['sebelum'] ? \Carbon\Carbon::parse($item['sebelum']->created_at)->format('d F Y') : '' }}
                 </td>
         
-                <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;">{{ $loop->first && $item['sebelum'] ? \Carbon\Carbon::parse($item['sebelum']->created_at)->format('d F Y') : '' }}</td>
-                <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;">{{ $item['sesudah'] ? $item['sesudah']->man ?? $item['sesudah']->man: '' }}</td>
+                <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;">{{ $loop->first && $item['sebelum'] ? \Carbon\Carbon::parse($item['sebelum']->updated_at)->format('d F Y') : '' }}</td>
+                <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;">{{ $item['sesudah'] ? $item['sesudah']->man_realisasi ?? $item['sesudah']->man_realisasi: '' }}</td>
                 <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;">{{ $item['sesudah'] ? $item['sesudah']->quantity_realisasi ?? $item['sesudah']->quantity: '' }}</td>
                 <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;">{{ $item['sesudah'] ? 'Rp ' . number_format($item['sesudah']->total_realisasi ?? $item['sesudah']->total, 0, ',', '.') : '' }}</td>
                 <td style="border: 1px solid black; text-align: center; font-size: 6px; vertical-align: middle;" >

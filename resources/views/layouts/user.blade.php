@@ -98,7 +98,7 @@
                           Request::routeIs($singleMenu->route) || 
                           Request::is(ltrim($singleMenu->route, '/') . '*') ||
                           (Str::contains($singleMenu->route, 'perdin') && Str::contains(Request::path(), 'perdin')) ||
-                          (Str::contains($singleMenu->route, 'realisasi') && Str::contains(Request::path(), 'realisasi'))
+                          (Str::contains($singleMenu->route, 'historyrealisasi') && Str::contains(Request::path(), 'historyrealisasi'))
                           ? 'active' 
                           : '' 
                       }}">
