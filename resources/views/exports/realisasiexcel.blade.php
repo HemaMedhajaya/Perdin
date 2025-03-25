@@ -1,6 +1,11 @@
 <table>
     <thead>
         <tr>
+            <td colspan="15" style="height: 30px border: 1px solid black;">
+                    <img src="{{ public_path('dist/img/logo_stramm (1).webp') }}" style="margin-left: 20px" alt="Logo">
+            </td>
+        </tr>
+        <tr>
             <th rowspan="2" style="border: 1px solid black; background-color: #f2f2f2; font-weight: bold; background-color: #ffd8a8; text-align: center; vertical-align: middle; font-size: 6pt; width: 30px;">No</th>
             <th colspan="4" style="border: 1px solid black; background-color: #f2f2f2; font-weight: bold; background-color: #ffd8a8; text-align: center; width: 150px; font-size: 6pt;">BUDGET 1</th>
             <th rowspan="2" style="border: 1px solid black; background-color: #f2f2f2; font-weight: bold; background-color: #ffd8a8; text-align: center; vertical-align: middle; font-size: 6pt; width: 70px;">TOTAL BUDGET</th>

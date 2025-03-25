@@ -51,9 +51,9 @@
         </tr>
         <tr>
             <th style="border: 1px solid black; background-color: #f2f2f2; padding: 8px;">Category Produk</th>
-            <td colspan="10" style="border: 1px solid black; padding: 8px;">{{ $category_product }}</td>
+            <td colspan="10" style="border: 1px solid black; padding: 8px;">{{ $category_product ? : '-'}}</td>
         </tr>
-
+        
         <tr>
             <th colspan="11" style="text-align: center; background-color: #e0e0e0; border: 1px solid black; padding: 8px;">Peserta Perjalanan Dinas</th>
         </tr>
