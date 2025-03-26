@@ -65,8 +65,9 @@
                     <select name="type" id="type" class="form-select">
                         <option value="">Pilih Type</option>
                         <option value="0">User</option>
-                        <option value="1">Admin</option>
+                        <option value="1">super Admin</option>
                         <option value="2">Admin Approver</option>
+                        <option value="4">IT Admin</option>
                     </select>
                 </div>
             </div>

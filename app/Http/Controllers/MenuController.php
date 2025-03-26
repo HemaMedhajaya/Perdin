@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
@@ -86,5 +87,11 @@ class MenuController extends Controller
     {
         Menu::destroy($id);
         return response()->json(['berhasil' => 'Menu berhasil dihapus!']);
+    }
+
+    public function getRole()
+    {
+        $role = Role::all();
+        return response()->json($role);
     }
 }

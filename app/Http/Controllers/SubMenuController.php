@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\Permission;
 use App\Models\SubMenu;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class SubMenuController extends Controller
@@ -63,9 +65,28 @@ class SubMenuController extends Controller
             'type_menu' => 'required'
         ]);
 
-        SubMenu::create($request->all());
-        
-        return response()->json(['berhasil' => 'Submenu berhasil ditambahkan!']);
+        $submenu = SubMenu::create($request->all());
+
+        $lastGroup = Permission::orderBy('groupby', 'desc')->first();
+        $newGroup = $lastGroup ? $lastGroup->groupby + 1 : 1;
+
+        $permissions = [
+            $request->name, 
+            'Add ' . $request->name,
+            'Edit ' . $request->name,
+            'Delete ' . $request->name
+        ];
+
+        foreach ($permissions as $name) {
+            Permission::create([
+                'name' => $name,
+                'slug' => $name,
+                'groupby' => $newGroup,
+                'submenu_id' => $submenu->id
+            ]);
+        }
+
+        return response()->json(['berhasil' => 'Submenu dan permission berhasil ditambahkan!']);
     }
 
     public function edit(string $id)

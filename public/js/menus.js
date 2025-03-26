@@ -31,7 +31,22 @@ $(document).ready(function() {
         $('#icon').val('');
         $('#type').val('');
         $('#is_parent').val('');
+        loadUsers();
     });
+
+    function loadUsers() {
+        $.get(routes.SuperadminRole, function(roles) { 
+            $('#type').empty();
+            $('#type').append('<option value="">Pilih Type</option>');
+    
+            roles.forEach(function(role) {
+                $('#type').append(`<option value="${role.id}">${role.name}</option>`);
+            });
+        }).fail(function() {
+            alert('Gagal mengambil data role. Pastikan API berjalan dengan benar.');
+        });
+    }
+    
 
     $('#saveUser').click(function() {
         var id = $('#menusid').val();

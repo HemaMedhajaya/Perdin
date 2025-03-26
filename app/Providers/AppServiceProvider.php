@@ -20,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
                 $type = 2; 
             } elseif ($role === 3) {
                 $type = 0;
+            } elseif ($role === 4) {
+                $type = 4;
             }
 
             // Ambil menu utama berdasarkan type

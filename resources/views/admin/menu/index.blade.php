@@ -49,10 +49,7 @@
                 </div>
                 <div class="mb-2">
                     <select name="type" id="type" class="form-select">
-                        <option value="">Pilih Type</option>
-                        <option value="0">User</option>
-                        <option value="1">Admin</option>
-                        <option value="2">Admin Approver</option>
+                       
                     </select>
                 </div>
                 <div class="mb-2">
@@ -95,7 +92,8 @@
 @section('script')
 <script>
     var routes = {
-        menusData: "{{ route('menus.data') }}"
+        menusData: "{{ route('menus.data') }}",
+        SuperadminRole: "{{ route('superadmin.role') }}",
     }
 </script>
 <script src="{{ asset('js/menus.js') }}"></script>

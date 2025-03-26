@@ -134,6 +134,8 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     Route::get('/adminapproval/edit/{id}', [AdminApprovalController::class, 'edit'])->name('adminapproval.edit');
     Route::put('/adminapproval/update/{id}', [AdminApprovalController::class, 'update'])->name('adminapproval.update');
 
+    Route::get('superadmin/role', [MenuController::class, 'getRole'])->name('superadmin.role');
+
 });
 
 Route::middleware(['check.expired', 'role:user'])->group( function() {
