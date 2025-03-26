@@ -19,7 +19,7 @@
                                     <th>Jenis</th>
                                     <th>Deskripsi</th>
                                     <th>Total</th>
-                                    <th>Action</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>

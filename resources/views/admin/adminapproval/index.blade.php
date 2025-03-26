@@ -7,9 +7,7 @@
         <div class="col-lg-12 col-md-12 col-sm-12 mb-4 order-0">
             <div class="card">
                 <div class="card-body">
-                    <button id="addJabatan" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal">
-                        Tambah Jabatan
-                    </button>
+                    <h5 class="mb-0 mb-3">Data Admin Approve</h5>
                     <div class="table-responsive" style="overflow-x: auto;">
                         <table id="usersTable" class="table table-striped table-bordered w-100">
                             <thead class="thead-dark">
@@ -33,14 +31,55 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="userModalLabel">Form Jabatan</h5>
+                <h5 class="modal-title" id="userModalLabel">Form Admin Approve</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="jabatanid">
+                <input type="hidden" id="adminapproveid">
                 <div class="mb-2">
                     <input type="text" id="name" class="form-control" placeholder="Nama">
                 </div>
+                <div class="mb-2">
+                    <select name="type" id="udf1" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf2" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf3" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf4" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf5" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf6" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf7" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf8" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf9" class="form-select">
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <select name="type" id="udf10" class="form-select">
+                    </select>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -60,7 +99,7 @@
             </div>
             <div class="modal-body">
                 <p>Apakah Anda yakin ingin menghapus user ini?</p>
-                <input type="hidden" id="deletejabatanid">
+                <input type="hidden" id="deleteadminapproveid">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -74,8 +113,8 @@
 @section('script')
 <script>
     var routes = {
-        jabatanData: "{{ route('jabatan.data') }}"
+        adminapprovalData: "{{ route('adminapproval.data') }}",
     }
 </script>
-<script src="{{ asset('js/jabatan.js') }}"></script>
+<script src="{{ asset('js/adminapproval.js') }}"></script>
 @endsection

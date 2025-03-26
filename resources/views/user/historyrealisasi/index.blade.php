@@ -17,7 +17,7 @@
                                         <th>Keperluan</th>
                                         <th>Lokasi Kerja</th>
                                         <th>Status Approve</th>
-                                        <th>Action</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                             </table>

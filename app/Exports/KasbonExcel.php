@@ -32,7 +32,7 @@ class KasbonExcel implements FromView
             'no_so' => $data1->nomorso ?? '-',
             'lokasi_kerja' => $data1->lokasikerja,
             'keperluan' => $data1->keperluan,
-            'category_product' => 'Furniture',
+            'category_product' => $data1->categorypf->map(fn($cp) => $cp->category->name)->implode(', '),
             'peserta_perjalanan' => $participants,
             'penanggung_jawab' => $data1->penanggungjawab->user->name,
             'estimasi_biaya' => $data1->expenses,

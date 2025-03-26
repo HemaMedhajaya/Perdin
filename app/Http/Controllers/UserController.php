@@ -79,7 +79,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
+            'role' => $request->role_id,
         ]);
 
         UserActivityLog::create([
@@ -113,7 +113,7 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role_id' => $request->role_id,
+            'role' => $request->role_id,
         ]);
 
         UserActivityLog::create([

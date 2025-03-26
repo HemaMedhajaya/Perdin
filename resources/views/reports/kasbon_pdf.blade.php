@@ -99,8 +99,8 @@
 
         <tr>
             <th>Category Product</th>
-            <td colspan="4">{{ $category_product }}</td>
-        </tr>
+            <td colspan="4">{{ $category_product ?: '-' }}</td>
+        </tr>        
 
         <tr>
             <th colspan="5" style="text-align: center; background-color: #e0e0e0;">Peserta Perjalanan Dinas</th>

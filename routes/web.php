@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminApprovalController;
 use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BiayaController;
@@ -127,6 +128,11 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     Route::get('/role/permission/{id}', [PermissionroleController::class, 'index'])->name('role.permission');
     Route::post('/permission-role/toggle', [PermissionRoleController::class, 'togglePermission'])->name('permission-role.toggle');
 
+    // AdminApproval
+    Route::get('/adminapproval', [AdminApprovalController::class, 'index'])->name('adminapproval.index');
+    Route::get('/adminapproval/data', [AdminApprovalController::class, 'getData'])->name('adminapproval.data');
+    Route::get('/adminapproval/edit/{id}', [AdminApprovalController::class, 'edit'])->name('adminapproval.edit');
+    Route::put('/adminapproval/update/{id}', [AdminApprovalController::class, 'update'])->name('adminapproval.update');
 
 });
 
