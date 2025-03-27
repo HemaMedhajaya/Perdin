@@ -47,6 +47,7 @@
   </head>
 
   <body>
+    @include('layouts.loading')
     <!-- Content -->
 
     <div class="container-xxl">
@@ -124,28 +125,18 @@
                       {{ $error }}
                   </div>
               @endforeach
-              <!-- Loader element -->
-            <div id="loader" class="loader" style="display: none;">
-              <div class="spinner"></div> <!-- Customize this with your spinner design -->
-            </div>
 
-              <form id="formAuthentication" class="mb-6" action="{{ route('login') }}" method="POST">
+            <div id="responseMessage" class="mt-3"></div>
+              <form id="formAuthentication" class="mb-6">
                 @csrf
                 <div class="mb-6">
-                  <label for="email" class="form-label">Email</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email or username"
-                    autofocus 
-                    required />
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email or username" required />
                 </div>
                 <div class="mb-6">
-                  <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
+                    <button class="btn btn-primary d-grid w-100" type="submit">Login</button>
                 </div>
-              </form>
+            </form>
 
             </div>
           </div>
@@ -163,6 +154,14 @@
 
 
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var routes = {
+            loginPost: "{{ route('login.post') }}",
+            otpAuth: "{{ route('show.otp') }}",
+        }
+    </script>
+    <script src="{{ asset('js/auth.js') }}"></script>
 
     <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>

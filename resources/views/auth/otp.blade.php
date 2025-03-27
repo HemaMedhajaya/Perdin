@@ -118,6 +118,9 @@
                         {{ session('error') }}
                     </div>
                 @endif
+                {{-- <div class="d-flex justify-content-center align-items-center"> --}}
+                  <p class="mb-6">Check you email for OTP.</p>
+                {{-- </div> --}}
               <form id="formAuthentication" class="mb-6" action="{{ route('otp.verify') }}" method="POST">
                 @csrf
                 <div class="mb-6">

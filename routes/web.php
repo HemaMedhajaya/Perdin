@@ -27,7 +27,7 @@ Route::get('/tabel', function () {
 
 //Login
 Route::get('/login', [AuthController::class, 'showlogin'])->name('login');
-Route::post('/login', [AuthController::class, 'loginpost']);
+Route::post('/login', [AuthController::class, 'loginpost'])->name('login.post');
 Route::get('/verrify-otp', [AuthController::class, 'showotp'])->name('show.otp');
 Route::post('/verify-otp', [AuthController::class, 'verifyOTP'])->name('otp.verify');
 Route::get('/logout', function () {

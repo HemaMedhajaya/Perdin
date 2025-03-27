@@ -42,20 +42,26 @@ class AuthController extends Controller
             // Generate OTP
             $otp = OTPService::generateOTP(user: $user);
 
-            // Kirim OTP ke email
             try {
                 Mail::to($user->email)->send(new OtpMail($otp));
 
-                // simpan session role user
                 session()->put('role', $user->role);
 
-                return redirect()->route('show.otp')->with('success', 'Kode OTP telah dikirim ke email Anda.');
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('show.otp') 
+                ]);
             } catch (\Exception $e) {
-                return back()->with('error', 'Gagal mengirim email. Pastikan Anda terhubung ke internet dan coba lagi.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat mengirim OTP karena tidak ada koneksi internet. Silakan coba lagi nanti.'
+                ]);
             }
         }
-
-        return back()->with(['error' => 'Email tidak terdaftar.']);
+        return response()->json([
+            'success' => false,
+            'message' => 'Email belum terdaftar'
+        ]);
     }
 
         public function verifyOTP(Request $request)
