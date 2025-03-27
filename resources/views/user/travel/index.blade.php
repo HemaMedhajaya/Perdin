@@ -1,6 +1,7 @@
 @extends('layouts.user')
 @section('title', 'Perjalanan Dinas')
 @section('content')
+@include('layouts.loading')
 <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
@@ -17,6 +18,8 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Project</th>
+                                        <th>Approve Perdin</th>
+                                        <th>Aprove Realisasi</th>
                                         <th>Status Perdin</th>
                                         <th>Status Realisasi</th>
                                         <th>Aksi</th>

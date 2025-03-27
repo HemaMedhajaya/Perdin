@@ -1,6 +1,7 @@
 @extends('layouts.user')
 @section('title', 'Perjalanan Dinas')
 @section('content')
+@include('layouts.loading')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="container-xxl flex-grow-1 container-p-y">

@@ -10,16 +10,28 @@ class TravelRequestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $detail; // Data yang dikirim ke email
+    public $approver;
+    public $statusTampil; 
+    public $user; 
+    public $statuskirim; 
 
-    public function __construct($detail)
+    public function __construct($approver, $statusTampil, $user, $statuskirim)
     {
-        $this->detail = $detail;
+        $this->approver = $approver;
+        $this->statusTampil = $statusTampil;
+        $this->user = $user;
+        $this->statuskirim = $statuskirim;
     }
 
     public function build()
     {
-        return $this->subject('Status Perjalanan Dinas')
-                    ->view('emails.travel_request'); // Blade template untuk email
+        return $this->subject('Approval Perjalanan Dinas')
+            ->view('emails.travel_request')
+            ->with([
+                'name' => $this->user->name,
+                'status' => $this->statusTampil, // Gunakan statusTampil yang sudah dimapping
+                'project' => $this->approver->name_project,
+                'statuskirim' => $this->statuskirim,
+            ]);
     }
 }

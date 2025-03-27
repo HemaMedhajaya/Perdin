@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    // Ambil ID dari URL
     var urlSegments = window.location.pathname.split('/'); 
     var id = urlSegments[urlSegments.length - 1]; 
 
@@ -116,7 +115,8 @@ $(document).ready(function () {
             status_approve_realisasi: status,
             comentar: komentar
         };
-    
+        $('.modal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: url,
             type: 'POST',
@@ -132,8 +132,10 @@ $(document).ready(function () {
                 if (response.gagal) {
                     toastr.error(response.gagal, "Error", { "closeButton": true, "progressBar": true });
                 }
-                $('.modal').modal('hide');
                 table.ajax.reload();
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });

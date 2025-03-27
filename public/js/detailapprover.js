@@ -79,7 +79,8 @@ $(document).ready(function () {
             status_approve: status,
             comentar: komentar
         };
-    
+        $('.modal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: url,
             type: 'POST',
@@ -95,8 +96,11 @@ $(document).ready(function () {
                 if (response.gagal) {
                     toastr.error(response.gagal, "Error", { "closeButton": true, "progressBar": true });
                 }
-                $('.modal').modal('hide');
+                
                 table.ajax.reload();
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });

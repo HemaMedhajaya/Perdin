@@ -35,9 +35,8 @@ Auth::logout(); return redirect()->route('login'); })->name('logout');
 // End
 
 Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
-    Route::get('/', [UserController::class, 'dashboard'])->name('dashboard');
+    
     // User
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/data', [UserController::class, 'getData'])->name('users.data');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
@@ -47,7 +46,6 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     // End User
 
     // Karyawan
-    Route::get('/karyawans', [KaryawanController::class, 'index'])->name('karyawans.index');
     Route::get('/karyawan/data', [KaryawanController::class, 'getData'])->name('karyawans.data');
     Route::post('/karyawans', [KaryawanController::class, 'store'])->name('karyawans.store');
     Route::put('/karyawans/{id}', [KaryawanController::class, 'update'])->name('karyawans.update');
@@ -56,7 +54,6 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     // End Karyawan
 
     // Jabatan
-    Route::get('/jabatan', [JabatanController::class, 'index'])->name('jabatan.index');
     Route::get('/jabatan/data', [JabatanController::class, 'getData'])->name('jabatan.data');
     Route::post('/jabatan', [JabatanController::class, 'store'])->name('jabatan.store');
     Route::get('/jabatan/{id}/edit', [JabatanController::class, 'edit'])->name('jabatan.edit');
@@ -65,7 +62,6 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     // End Jabatan
 
     // Departement
-    Route::get('/departement', [DepartementController::class, 'index'])->name('departement.index');
     Route::get('/departement/data', [DepartementController::class, 'getData'])->name('departement.data');
     Route::post('/departement', [DepartementController::class, 'store'])->name('departement.store');
     Route::get('/departement/{id}/edit', [DepartementController::class, 'edit'])->name('departement.edit');
@@ -74,7 +70,6 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     // End Departement
 
     // Category Product
-    Route::get('/categorypd', [CategoryproductController::class, 'index'])->name('categorypd.index');
     Route::get('/categorypd/data', [CategoryproductController::class, 'getData'])->name('categorypd.data');
     Route::post('/categorypd', [CategoryproductController::class, 'store'])->name('categorypd.store');
     Route::get('/categorypd/{id}/edit', [CategoryproductController::class, 'edit'])->name('categorypd.edit');
@@ -102,7 +97,6 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     // End Sub Menu
 
     // Biaya
-    Route::get('/biaya', [BiayaController::class, 'index'])->name('biaya.index');
     Route::get('/biaya/data', [BiayaController::class, 'getData'])->name('biaya.data');
     Route::post('/biaya', [BiayaController::class, 'store'])->name('biaya.store');
     Route::get('/biaya/{id}/edit', [BiayaController::class, 'edit'])->name('biaya.edit');
@@ -111,14 +105,12 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     // End Biaya
 
     // Role
-    Route::get('/role', [RoleController::class, 'index'])->name('role.index');
     Route::get('/role/data', [RoleController::class, 'getData'])->name('role.data');
     Route::post('/role', [RoleController::class, 'store'])->name('role.store');
     Route::get('/role/{id}/edit', [RoleController::class, 'edit'])->name('role.edit');
     Route::put('/role/{id}', [RoleController::class, 'update'])->name('role.update');
     Route::delete('/role/{id}', [RoleController::class, 'destroy'])->name('role.destroy');
 
-    Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
     Route::get('/permission/data', [PermissionController::class, 'getData'])->name('permission.data');
     Route::post('/permission', [PermissionController::class, 'store'])->name('permission.store');
     Route::get('/permission/{id}/edit', [PermissionController::class, 'edit'])->name('permission.edit');
@@ -129,7 +121,6 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
     Route::post('/permission-role/toggle', [PermissionRoleController::class, 'togglePermission'])->name('permission-role.toggle');
 
     // AdminApproval
-    Route::get('/adminapproval', [AdminApprovalController::class, 'index'])->name('adminapproval.index');
     Route::get('/adminapproval/data', [AdminApprovalController::class, 'getData'])->name('adminapproval.data');
     Route::get('/adminapproval/edit/{id}', [AdminApprovalController::class, 'edit'])->name('adminapproval.edit');
     Route::put('/adminapproval/update/{id}', [AdminApprovalController::class, 'update'])->name('adminapproval.update');
@@ -139,10 +130,8 @@ Route::middleware(['check.expired', 'role:superadmin'])->group(function () {
 });
 
 Route::middleware(['check.expired', 'role:user'])->group( function() {
-    Route::get('/dashboard', [PerdinController::class, 'index'])->name('index.dashboard');
 
     // Perjalan Dinas
-    Route::get('/perdin', action: [TravelRequestController::class, 'index'])->name('perdin.index');
     Route::get('/perdin/data', [TravelRequestController::class, 'getData'])->name('perdin.data');
     Route::get('/perdin/datauser', [TravelRequestController::class, 'getUser'])->name('perdin.datauser');
     Route::get('/perdin/getcategoryproduct', [TravelRequestController::class, 'getCategoryProduct'])->name('perdin.getcategoryproduct');
@@ -155,7 +144,6 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     // End Perjalan Dinas
 
     // Detail Perjalan Dinas
-    Route::get('/perdin/details/{id}', [TravelRequestController::class, 'detail'])->name('perdin.detail');
     Route::get('/perdin/{id}/detail', [TravelRequestController::class, 'getDataDetail'])->name('perdin.datadetail');
     Route::post('/detail', [TravelRequestController::class, 'saveBiaya'])->name('perdin.savaebiaya');
     Route::put('/detail/{id}', [TravelRequestController::class, 'saveBiaya'])->name('perdin.updatebiaya');
@@ -165,10 +153,12 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::get('/statusapprove/{id}', [TravelRequestController::class, 'cekStatusApprove'])->name('detail.statusapprove');
     Route::get('/statusapprovedetail/{id}', [TravelRequestController::class, 'cekStatusApproveDetail'])->name('detail.statusapprovedetail');
     // End Detail Perjalan Dinas
-
+    
+    
     // Realisasi Perjalan Dinas
-    Route::get('/perdin/realisasi/{id}', [RealisasiController::class, 'index'])->name('perdin.realisasi');
+    Route::get('/perdin/details/{id}', [TravelRequestController::class, 'detail'])->name('perdin.detail');
     Route::get('/perdin/realisasi/{id}/detail', [RealisasiController::class, 'getDataRealisasi'])->name('perdin.realisasi.detail');
+    Route::get('/perdin/realisasi/{id}', [RealisasiController::class, 'index'])->name('perdin.realisasi');
     Route::post('/realisasi', [RealisasiController::class, 'store'])->name('realisasi.store');
     Route::get('/realisasi/{id}/edit', [RealisasiController::class, 'edit'])->name('realisasi.edit');
     Route::put('/realisasi/{id}', [RealisasiController::class, 'update'])->name('realisasi.update');
@@ -185,16 +175,13 @@ Route::middleware(['check.expired', 'role:user'])->group( function() {
     Route::get('/export-kasbon-pdf/{id}', [TravelRequestController::class, 'exportPDF'])->name('export.kasbon.pdf');
     Route::get('/export-kasbon-excel/{id}', [TravelRequestController::class, 'exportExcel'])->name('export.kasbon.excel');
     // End PDF & Excel Perdin Sebelum Realisasi
-    Route::get('/historyrealisasi', [HistoryRealisasiController::class, 'index'])->name('historyrealisasi.index');
     Route::get('/historyrealisasi/data', [HistoryRealisasiController::class, 'getData'])->name('historyrealisasi.data');
     Route::get('/historyrealisasi/realisasi/{id}', [HistoryRealisasiController::class, 'sudahRealisasi'])->name('historyrealisasi.realisasi');
     Route::get('/historyrealisasi/realisasi/data/{id}', [HistoryRealisasiController::class, 'getDataCombined'])->name('historyrealisasi.Combined');
 });
 
 Route::middleware(['check.expired', 'role:admin'])->group(function() {
-    Route::get('/dashboardadmin', [ApprovalController::class, 'dashboard'])->name('dashboardapp');
 
-    Route::get('/approver', [ApprovalController::class, 'index'])->name('approver.index');
     Route::get('/approver/data', [ApprovalController::class, 'getData'])->name('approver.data');
     Route::get('/approver/getcategoryproduct', [ApprovalController::class, 'getCategoryProduct'])->name('approver.getcategoryproduct');
     Route::get('/approver/userpj', [ApprovalController::class, 'getUserpj'])->name('approver.userpj');
@@ -208,7 +195,7 @@ Route::middleware(['check.expired', 'role:admin'])->group(function() {
     Route::get('/approver/detail/{id}/edit', [DetailApproverControler::class, 'editdetail'])->name('approver.detail.edit');
     Route::put('/approver/detail/{id}/update', [DetailApproverControler::class, 'updateTravelRequest'])->name('approver.detail.approve');
     // End Detail
-
+    
     // Realisasi
     Route::get('/approver/realisasi/{id}', [ApprovalController::class, 'realisasiDetail'])->name('approveadmin.realisasi');
     Route::get('/approver/relaisasi/{id}/data', [ApprovalController::class, 'getDataCombined'])->name('approveadmin.combined');
@@ -221,3 +208,53 @@ Route::middleware(['check.expired', 'role:admin'])->group(function() {
     Route::get('/export/realisasi/admin/{id}', [ApprovalController::class, 'exportExcelRealisasi'])->name('export.excel.admin.realisasi');
 });
 
+Route::middleware(['check.expired', 'role:adminit'])->group(function() {
+    // Menu
+    Route::get('/menus', [MenuController::class, 'index'])->name('menus.index');
+    Route::get('/menus/data', [MenuController::class, 'getData'])->name('menus.data');
+    Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');
+    Route::get('/menus/{id}/edit', [MenuController::class, 'edit'])->name('menus.edit');
+    Route::put('/menus/{id}', [MenuController::class, 'update'])->name('menus.update');
+    Route::delete('/menus/{id}', [MenuController::class, 'destroy'])->name('menus.destroy');
+    Route::get('superadmin/role', [MenuController::class, 'getRole'])->name('superadmin.role');
+    // End Menu
+
+    // Sub Menu
+    Route::get('/submenus', [SubMenuController::class, 'index'])->name('submenus.index');
+    Route::get('/submenus/data', [SubMenuController::class, 'getData'])->name('submenus.data');
+    Route::get('/submenus/menus', [SubMenuController::class, 'getMenu'])->name('submenus.menus');
+    Route::post('/submenus', [SubMenuController::class, 'store'])->name('submenus.store');
+    Route::get('/submenus/{id}/edit', [SubMenuController::class, 'edit'])->name('submenus.edit');
+    Route::put('/submenus/{id}', [SubMenuController::class, 'update'])->name('submenus.update');
+    Route::delete('/submenus/{id}', [SubMenuController::class, 'destroy'])->name('submenus.destroy');
+    // End Sub Menu
+});
+
+Route::middleware(['check.expired', 'check.permission'])->group(function() {
+    // superadmin
+    Route::get('/', [UserController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboardit', [UserController::class, 'dashboard'])->name('dashboard.it');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/karyawans', [KaryawanController::class, 'index'])->name('karyawans.index');
+    Route::get('/jabatan', [JabatanController::class, 'index'])->name('jabatan.index');
+    Route::get('/departement', [DepartementController::class, 'index'])->name('departement.index');
+    Route::get('/categorypd', [CategoryproductController::class, 'index'])->name('categorypd.index');
+    Route::get('/menus', [MenuController::class, 'index'])->name('menus.index');
+    Route::get('/submenus', [SubMenuController::class, 'index'])->name('submenus.index');
+    Route::get('/biaya', [BiayaController::class, 'index'])->name('biaya.index');
+    Route::get('/role', [RoleController::class, 'index'])->name('role.index');
+    Route::get('/permission', [PermissionController::class, 'index'])->name('permission.index');
+    Route::get('/adminapproval', [AdminApprovalController::class, 'index'])->name('adminapproval.index');
+    // endsuperadmin
+
+    // user
+    Route::get('/dashboard', [PerdinController::class, 'index'])->name('index.dashboard');
+    Route::get('/perdin', action: [TravelRequestController::class, 'index'])->name('perdin.index');
+    Route::get('/historyrealisasi', [HistoryRealisasiController::class, 'index'])->name('historyrealisasi.index');
+    // endadmin
+
+    // admin
+    Route::get('/dashboardadmin', [ApprovalController::class, 'dashboard'])->name('dashboardapp');
+    Route::get('/approver', [ApprovalController::class, 'index'])->name('approver.index');
+    // endadmin
+});

@@ -32,8 +32,9 @@
     <div class="container">
         <h2>Approval Perjalanan Dinas</h2>
         <p>Halo, <strong>{{ $name }}</strong>,</p>
-        <p>Perjalanan dinas untuk proyek <strong>{{ $project }}</strong> telah mengalami perubahan status <strong>{{ $statuskirim }}</strong> .</p>
+        <p>Perjalanan dinas untuk proyek <strong>{{ $project }}</strong> telah mengalami perubahan status <strong>{{ $statuskirim }}</strong>.</p>
         <p>Status saat ini: <span class="status">{{ $status }}</span></p>
+        <p>Persetujuan dilakukan oleh: <strong>{{ $jabatan }}</p>
         <p>Silakan periksa sistem untuk informasi lebih lanjut.</p>
         <hr>
         <p class="footer">Email ini dikirim secara otomatis oleh sistem. Harap tidak membalas email ini.</p>

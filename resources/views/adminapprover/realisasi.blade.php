@@ -1,8 +1,9 @@
 @extends('layouts.adminapprover')
 @section('title', 'Perjalanan Dinas')
 @section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+@include('layouts.loading')
 
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <div class="col-md-12">

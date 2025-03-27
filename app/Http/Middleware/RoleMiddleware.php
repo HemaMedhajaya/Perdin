@@ -15,7 +15,8 @@ class RoleMiddleware
         $roles = [
             'superadmin' => 1,
             'admin' => 2,
-            'user' => 3
+            'user' => 3,
+            'adminit' => 4,
         ];
         if (!Auth::check() || Auth::user()->role !== $roles[$role]) {
             return back()->with('gagal', 'Akses ditolak! Anda tidak memiliki izin.');

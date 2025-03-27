@@ -125,7 +125,8 @@ $(document).ready(function () {
         if (method === 'PUT') {
             data._method = 'PUT'; 
         }
-    
+        $('#biayaModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: url,
             type: 'POST', 
@@ -143,7 +144,6 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#biayaModal').modal('hide'); 
                 table.ajax.reload(); 
             },
             error: function (xhr) {
@@ -151,6 +151,9 @@ $(document).ready(function () {
                     "closeButton": true,
                     "progressBar": true
                 });
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });
@@ -195,6 +198,8 @@ $(document).ready(function () {
 
     $('#confirmDelete').click(function () {
         var id = $('#deleterealisasi').val();
+        $('#deleteModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: '/realisasi/' + id,
             type: 'DELETE',
@@ -214,8 +219,10 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#deleteModal').modal('hide');
                 table.ajax.reload();
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });
@@ -230,8 +237,8 @@ $(document).ready(function () {
     $('#confirmSubmit').click(function () {
         var idreques = $('#requestId').val();
         var idtravelrequest = $(this).attr('data-idrequesttravel');
-        console.log(idtravelrequest);
-        console.log(2);
+        $('#submitRequestModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: '/statusapprove/realisasi/' + idtravelrequest,
             type:'PUT',
@@ -252,7 +259,6 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#submitRequestModal').modal('hide');
                 table.ajax.reload();
                 updateButton(response.status_approve_realisasi);
                 console.log(response.status_approve_realisasi)
@@ -261,6 +267,9 @@ $(document).ready(function () {
                 } else {
                     $('#addJabatan').removeClass('hiddenbutton');
                 }
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     })

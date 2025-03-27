@@ -34,13 +34,14 @@ $(document).ready(function() {
         loadUsers();
     });
 
-    function loadUsers() {
+    function loadUsers(selectedType = '') {
         $.get(routes.SuperadminRole, function(roles) { 
             $('#type').empty();
             $('#type').append('<option value="">Pilih Type</option>');
     
             roles.forEach(function(role) {
-                $('#type').append(`<option value="${role.id}">${role.name}</option>`);
+                var selected = role.id == selectedType ? 'selected' : ''; // Cek apakah harus dipilih
+                $('#type').append(`<option value="${role.id}" ${selected}>${role.name}</option>`);
             });
         }).fail(function() {
             alert('Gagal mengambil data role. Pastikan API berjalan dengan benar.');
@@ -90,6 +91,8 @@ $(document).ready(function() {
             $('#icon').val(menu.icon);
             $('#type').val(menu.type);
             $('#is_parent').val(menu.is_parent);
+            loadUsers(menu.type);
+
             $('#userModal').modal('show');
         });
     });

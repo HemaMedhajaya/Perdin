@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Exports\PerjalananExport;
 use App\Exports\RealisasiExcel;
+use App\Mail\TravelRequestMail;
 use App\Models\TravelExpense;
 use App\Models\TravelRealisasi;
 use App\Models\TravelRequest;
 use App\Models\User;
+use App\Models\UserMatrixApprovals;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
@@ -234,25 +237,52 @@ class RealisasiController extends Controller
             return response()->json(['gagal' => 'Data tidak ditemukan!']);
         }
 
-        $idrequest = $request->idrequest;
+        $idrequest = intval($request->idrequest); 
 
-        if ($idrequest != 1 && $idrequest != 2 ) {
-            return response()->json(['gagal' => 'Id request tidal valid!']);
+        if (!in_array($idrequest, [1, 2])) {
+            return response()->json(['gagal' => 'ID request tidak valid!']);
         }
 
         $data->update([
             'status_approve_realisasi' => $idrequest,
         ]);
+        $approver = $data;
+        $statuskirim = 'realisasi';
+        $statusMapping = [
+            1 => 'Dibatalkan',
+            2 => 'Diproses',
+        ];
+        $statusTampil = $statusMapping[$idrequest] ?? 'Tidak Diketahui';
+
+        $approval = UserMatrixApprovals::where('id_perdin', $id)
+            ->where('id_matrix', 2)
+            ->where('number', 1)
+            ->first();
+
+        if ($approval) {
+            $user = User::where('id', $approval->id_user)->first();
+
+            if ($user && $user->email) {
+                try {
+                    Mail::to($user->email)->send(new TravelRequestMail($approver, $statusTampil, $user, $statuskirim));
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'gagal' => 'Email gagal dikirim: ' . $e->getMessage(),
+                    ]);
+                }
+            }
+        }
 
         $message = ($idrequest == 2)
             ? 'Realisasi berhasil dikirim!'
-            : 'Realisasi berhsail dibatalkan!';
+            : 'Realisasi berhasil dibatalkan!';
 
         return response()->json([
             'berhasil' => $message,
             'status_approve_realisasi' => $data->status_approve_realisasi
         ]);
     }
+
 
     public function exportExcel($id)
     {

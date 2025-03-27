@@ -72,8 +72,8 @@ class AuthController extends Controller
                     session()->put('user_id', $user->id);
                     $role = session()->get('role',3);
                     
-
-                    if ($role === User::ROLE_ADMIN){
+                    
+                    if ($role === User::ROLE_ADMIN || $role == User::ROLE_ADMIN_IT){
                         return redirect()->route('dashboard')->with([
                             'token' => $token,
                             'berhasil' => 'Berhasil Login'

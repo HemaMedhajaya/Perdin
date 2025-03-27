@@ -63,11 +63,7 @@
                 </div>
                 <div class="mb-2">
                     <select name="type" id="type" class="form-select">
-                        <option value="">Pilih Type</option>
-                        <option value="0">User</option>
-                        <option value="1">super Admin</option>
-                        <option value="2">Admin Approver</option>
-                        <option value="4">IT Admin</option>
+                        
                     </select>
                 </div>
             </div>
@@ -104,7 +100,8 @@
 <script>
     var routes = {
         submenusData: "{{ route('submenus.data') }}",
-        menusData: "{{ route('submenus.menus') }}"
+        menusData: "{{ route('submenus.menus') }}",
+        SuperadminRole: "{{ route('superadmin.role') }}",
     }
 </script>
 <script src="{{ asset('js/submenu.js') }}"></script>

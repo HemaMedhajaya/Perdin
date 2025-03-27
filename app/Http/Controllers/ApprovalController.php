@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Exports\KasbonExcel;
 use App\Exports\RealisasiExcel;
+use App\Mail\ApproveMail;
 use App\Models\Categoryproduct;
+use App\Models\Karyawan;
 use App\Models\PermissionRole;
 use App\Models\TravelExpense;
 use App\Models\TravelRequest;
@@ -14,6 +16,7 @@ use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -312,58 +315,69 @@ class ApprovalController extends Controller
     public function updateTravelRequest(Request $request, $id)
     {
         $data = TravelRequest::find($id);
-        
+
         if (!$data) {
             return response()->json(['gagal' => 'Data tidak ditemukan!']);
         }
-    
+
         $updateData = ['status_approve_realisasi' => $request->status_approve_realisasi];
-        
+
+        $userid = session('user_id');
+        $karyawan = Karyawan::with('user', 'jabatan')->where('user_id', $userid)->first();
+
+        if (!$karyawan || !$karyawan->jabatan) {
+            return response()->json(['gagal' => 'Data karyawan atau jabatan tidak ditemukan!']);
+        }
+
+        $jabatan = $karyawan->jabatan->name;
+        $user = User::find($data->user_id);
+        $name = $user->name ?? 'User';
+        $statuskirim = 'Realisasi';
+
+        // Jika perjalanan dinas DITOLAK
         if ($request->status_approve_realisasi == 3) {
-            // Jika status_approve_realisasi == 3 (ditolak), tambahkan komentar
             $updateData['comentar'] = $request->comentar;
             $data->update($updateData);
-    
+
+            Mail::to($user->email)->send(new ApproveMail($name, 'Ditolak', $data, $jabatan, $statuskirim));
+
             return response()->json(['berhasil' => 'Perjalanan dinas berhasil ditolak!']);
         }
-    
+
+        // Jika perjalanan dinas DISETUJUI
         if ($request->status_approve_realisasi == 4) {
-            $userid = session('user_id');
-            
             $usermatrixapproval = UserMatrixApprovals::where('id_user', $userid)
                 ->where('id_matrix', 2)
                 ->where('status', 'Not Yet')
                 ->where('id_perdin', $id)
-                ->orderBy('number', 'asc') 
+                ->orderBy('number', 'asc')
                 ->first();
-            
+
             if ($usermatrixapproval) {
                 $hasNextApproval = UserMatrixApprovals::where('id_perdin', $id)
-                    ->where('id_matrix', 2) 
+                    ->where('id_matrix', 2)
                     ->where('number', '>', $usermatrixapproval->number)
                     ->where('status', 'Not Yet')
                     ->exists();
-            
+
                 if (!$hasNextApproval) {
                     $data->update($updateData);
-                    $usermatrixapproval->update([
-                        'status' => 'Approve'
-                    ]);
+                    $usermatrixapproval->update(['status' => 'Approve']);
                     $message = 'Perjalanan dinas berhasil disetujui!';
                 } else {
-                    $usermatrixapproval->update([
-                        'status' => 'Approve'
-                    ]);
+                    $usermatrixapproval->update(['status' => 'Approve']);
                     $message = 'Persetujuan berhasil disimpan. Menunggu approval selanjutnya.';
                 }
+
+                // **Kirim email persetujuan**
+                Mail::to($user->email)->send(new ApproveMail($name, 'Disetujui', $data, $jabatan, $statuskirim));
+
+                return response()->json(['berhasil' => $message]);
             } else {
                 return response()->json(['gagal' => 'Tidak ada approval yang ditemukan!']);
             }
-    
-            return response()->json(['berhasil' => $message]);
         }
-    
-        // Jika status_approve_realisasi bukan 3 atau 4, update data tanpa logika persetujuan
+
         $data->update($updateData);
         return response()->json(['berhasil' => 'Data perjalanan dinas berhasil diupdate!']);
     }

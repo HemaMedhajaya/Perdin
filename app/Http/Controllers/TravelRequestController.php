@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Exports\KasbonExcel;
 use App\Exports\KasbonExport;
+use App\Mail\TravelRequestMail;
 use App\Models\Categoryproduct;
 use App\Models\MatrixApprovals;
 use App\Models\PermissionRole;
@@ -16,6 +17,7 @@ use App\Models\TravelRequest;
 use App\Models\UserMatrixApprovals;
 use Auth;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -56,6 +58,48 @@ class TravelRequestController extends Controller
                 ->orderBy('id', 'desc');
 
             return DataTables::of($data)
+                ->addColumn('approve_perdin', function ($data) {
+                    $approval = UserMatrixApprovals::where('id_perdin', $data->id)
+                        ->where('id_matrix', 1)
+                        ->where('status', 'Approve')
+                        ->orderBy('number', 'desc') 
+                        ->first();
+                
+                    if ($approval) {
+                        $isLastApproval = !UserMatrixApprovals::where('id_perdin', $data->id)
+                            ->where('id_matrix', 1)
+                            ->where('status', 'Approve')
+                            ->where('number', '>', $approval->number)
+                            ->exists();
+                
+                        if ($isLastApproval) {
+                            $karyawan = Karyawan::where('user_id', $approval->id_user)->first();
+                            return '<span>' . $karyawan->jabatan->name . ' <i class="fa fa-check-circle text-success"></i></span>';
+                        }
+                    }
+                    return '-';
+                })            
+                ->addColumn('approve_realisasi', function ($data) {
+                    $approval = UserMatrixApprovals::where('id_perdin', $data->id)
+                        ->where('id_matrix', 2)
+                        ->where('status', 'Approve')
+                        ->orderBy('number', 'desc') 
+                        ->first();
+                
+                    if ($approval) {
+                        $isLastApproval = !UserMatrixApprovals::where('id_perdin', $data->id)
+                            ->where('id_matrix', 2)
+                            ->where('status', 'Approve')
+                            ->where('number', '>', $approval->number) 
+                            ->exists();
+                
+                        if ($isLastApproval) {
+                            $karyawan = Karyawan::where('user_id', $approval->id_user)->first();
+                            return $karyawan ? $karyawan->jabatan->name : 'Tidak ditemukan';
+                        }
+                    }
+                    return '-';
+                })
                 ->addColumn('status_and_action', function ($data) {
                     $status = [
                         0 => '<span class="badge bg-label-secondary">Draft</span>',
@@ -143,7 +187,7 @@ class TravelRequestController extends Controller
                         ' . $deleteButton . '
                     ';
                 })
-                ->rawColumns(['status_and_action', 'action','status_and_action_realisasi']) 
+                ->rawColumns(['status_and_action', 'action','status_and_action_realisasi', 'approve_perdin']) 
                 ->make(true);
         }
     }
@@ -265,7 +309,7 @@ class TravelRequestController extends Controller
                 // Simpan ke database
                 $userMatrixApproval->save();
 
-                $number++; // Increment number sesuai dengan id_matrix masing-masing
+                $number++;
             }
         }
 
@@ -500,6 +544,25 @@ class TravelRequestController extends Controller
         $approver->update([
             'status_approve' => $idrequest,
         ]);
+        $statuskirim = 'Perdin';
+        $statusMapping = [
+            0 => 'Dibatalkan',
+            5 => 'Diproses',
+        ];
+        $statusTampil = $statusMapping[$idrequest] ?? 'Tidak Diketahui';
+
+        $approval = UserMatrixApprovals::where('id_perdin', $id)
+            ->where('id_matrix', 1)
+            ->where('number', 1)
+            ->first();
+
+        if ($approval) {
+            $user = User::where('id', $approval->id_user)->first();
+
+            if ($user && $user->email) {
+                Mail::to($user->email)->send(new TravelRequestMail($approver, $statusTampil, $user, $statuskirim));
+            }
+        }
 
         $message = ($idrequest == 0) 
             ? 'Request berhasil dibatalkan!' 
@@ -510,6 +573,7 @@ class TravelRequestController extends Controller
             'status_approve' => $approver->status_approve,
         ]);
     }
+
 
     public function cekStatusApprove($id)
     {

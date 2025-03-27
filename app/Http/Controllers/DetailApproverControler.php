@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApproveMail;
+use App\Models\Karyawan;
 use App\Models\TravelExpense;
 use App\Models\TravelPenanggungjawab;
 use App\Models\TravelRequest;
 use App\Models\User;
 use App\Models\UserMatrixApprovals;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Yajra\DataTables\Facades\DataTables;
 
 class DetailApproverControler extends Controller
@@ -100,13 +103,13 @@ class DetailApproverControler extends Controller
     public function updateTravelRequest(Request $request, $id)
     {
         $data = TravelRequest::find($id);
-        
+
         if (!$data) {
             return response()->json(['gagal' => 'Data tidak ditemukan!']);
         }
 
         $updateData = ['status_approve' => $request->status_approve];
-        
+
         if ($request->status_approve == 2) {
             $updateData['comentar'] = $request->comentar;
             $data->update($updateData);
@@ -119,30 +122,33 @@ class DetailApproverControler extends Controller
                 ->where('status', 'Not Yet')
                 ->where('id_perdin', $id)
                 ->first();
-    
+
             if ($usermatrixapproval) {
-                // Cek apakah dia number terakhir untuk id_perdin = $id
                 $isLastApproval = !UserMatrixApprovals::where('id_perdin', $id)
-                    ->where('number', '>', $usermatrixapproval->number) // Ada approval dengan number lebih tinggi
-                    ->where('status', 'Not Yet') // Masih dalam status "Not Yet"
+                    ->where('number', '>', $usermatrixapproval->number)
+                    ->where('status', 'Not Yet')
                     ->exists();
-    
+
                 if ($isLastApproval) {
-                    // Jika dia yang terakhir, update $data
                     $data->update($updateData);
-                    $usermatrixapproval->update([
-                        'status' => 'Approve'
-                    ]);
+                    $usermatrixapproval->update(['status' => 'Approve']);
                 } else {
-                    // Jika bukan yang terakhir, update hanya status di UserMatrixApprovals
-                    $usermatrixapproval->update([
-                        'status' => 'Approve'
-                    ]);
+                    $usermatrixapproval->update(['status' => 'Approve']);
                 }
             }
         }
+        $statuskirim = 'Perdin';
+        $userid = session('user_id');
+        $karyawan = Karyawan::with('user')->where('user_id', $userid)->first();
+        $jabatan = $karyawan->jabatan->name;
+        $user = User::find($data->user_id);
+        $name = $user->name ?? 'User';
+        $project = $data->name_project;
+        $statusTampil = $request->status_approve == 1 ? 'Disetujui' : 'Ditolak';
+
+        Mail::to($user->email)->send(new ApproveMail($name, $statusTampil, $data, $jabatan, $statuskirim));
+
         $message = $request->status_approve == 1 ? 'Perjalanan dinas berhasil disetujui!' : 'Perjalanan dinas berhasil ditolak!';
-        
         return response()->json(['berhasil' => $message]);
     }
 

@@ -29,13 +29,16 @@ class SubMenuController extends Controller
 
     public function getData()
     {
-        $subMenus = SubMenu::with('menu');
+        $subMenus = SubMenu::with('menu')->orderBy('id','desc');
         return DataTables::of($subMenus)
             ->addColumn('menu_name', function ($subMenu) {
                 return $subMenu->menu ? $subMenu->menu->name : '-';
             })
             ->addColumn('type_label', function ($subMenu) {
-                return $subMenu->type == 1 ? 'Admin' : 'User';
+                return $subMenu->type == 1 ? 'Superadmin' : 
+                        ($subMenu->type == 2 ? 'Admin' : 
+                        ($subMenu->type == 3 ? 'User' : 
+                        ($subMenu->type == 4 ? 'IT Admin' : '-')));
             })
             ->addColumn('action', function($subMenu) {
                 return '

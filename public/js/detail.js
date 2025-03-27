@@ -96,6 +96,8 @@ $(document).ready(function () {
         var id = $('#idexpenses').val();
         var url = id ? '/detail/' + id : '/detail';
         var method = id ? 'PUT' : 'POST';
+        $('#biayaModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
     
         var data = {
             _token: $('meta[name="csrf-token"]').attr('content'),
@@ -130,7 +132,6 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#biayaModal').modal('hide');
                 table.ajax.reload();
             },
             error: function (xhr) {
@@ -138,6 +139,9 @@ $(document).ready(function () {
                     "closeButton": true,
                     "progressBar": true
                 });
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });
@@ -186,6 +190,8 @@ $(document).ready(function () {
 
     $('#confirmSubmit').click(function () {
         var idreques = $('#requestId').val();
+        $('#submitRequestModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: '/submitrequest/' + id,
             type:'PUT',
@@ -206,7 +212,7 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#submitRequestModal').modal('hide');
+                
                 table.ajax.reload();
                 updateButton(response.status_approve);
                 console.log(response.status_approve)
@@ -215,6 +221,9 @@ $(document).ready(function () {
                 } else {
                     $('#addJabatan').removeClass('hiddendetail');
                 }
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     })
@@ -248,6 +257,8 @@ $(document).ready(function () {
 
     $('#confirmDelete').click(function () {
         var id = $('#deletedetail').val();
+        $('#biayadeleteModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: '/detail/' + id,
             type: 'DELETE',
@@ -267,8 +278,11 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#biayadeleteModal').modal('hide');
                 table.ajax.reload();
+            }
+            ,
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); // Sembunyikan loading setelah request selesai
             }
         });
     });

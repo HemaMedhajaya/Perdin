@@ -16,6 +16,20 @@ $(document).ready(function () {
             },
             { data: 'name_project', name: 'name_project' },
             { 
+                data: 'approve_perdin', 
+                name: 'approve_perdin', 
+                orderable: false, 
+                searchable: false, 
+                className: 'text-center'
+            },
+            { 
+                data: 'approve_realisasi', 
+                name: 'approve_realisasi', 
+                orderable: false, 
+                searchable: false, 
+                className: 'text-center'
+            },
+            { 
                 data: 'status_and_action', 
                 name: 'status_and_action', 
                 orderable: false, 
@@ -33,10 +47,12 @@ $(document).ready(function () {
         ],
         columnDefs: [
             { width: "5%", targets: 0 }, 
-            { width: "35%", targets: 1 },
+            { width: "30%", targets: 1 },
             { width: "10%", targets: 2 },
-            { width: "15%", targets: 3 },
-            { width: "20%", targets: 4 }  
+            { width: "10%", targets: 3 },
+            { width: "10%", targets: 4 },  
+            { width: "15%", targets: 5 }, 
+            { width: "30%", targets: 6 },  
         ]
     });
 
@@ -139,25 +155,9 @@ $(document).ready(function () {
             lokasikerja: $('#lokasikerja').val(),
             keperluan: $('#keperluan').val(),
             idproductcg: selectedCategories,
-            // transportasi: {
-            //     deskripsi: $('input[name="transportasi[deskripsi][]"]').map(function () {
-            //         return $(this).val();
-            //     }).get(),
-            //     biaya: $('input[name="transportasi[biaya][]"]').map(function () {
-            //         return $(this).val();
-            //     }).get(),
-            //     qty: $('input[name="transportasi[qty][]"]').map(function () {
-            //         return $(this).val();
-            //     }).get(),
-            //     total: $('input[name="transportasi[total][]"]').map(function () {
-            //         return $(this).val();
-            //     }).get(),
-            //     keterangan: $('textarea[name="transportasi[keterangan][]"]').map(function () {
-            //         return $(this).val();
-            //     }).get(),
-            // },
         };
-
+        $('#userModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: url,
             type: 'POST',
@@ -175,7 +175,6 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#userModal').modal('hide');
                 table.ajax.reload();
             },
             error: function (xhr) {
@@ -183,6 +182,9 @@ $(document).ready(function () {
                     "closeButton": true,
                     "progressBar": true
                 });
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });
@@ -260,6 +262,8 @@ $(document).ready(function () {
 
     $('#confirmDelete').click(function () {
         var id = $('#deleteperdinid').val();
+        $('#deleteModal').modal('hide');
+        $('#loadingOverlay').fadeIn();
         $.ajax({
             url: '/perdin/' + id,
             type: 'DELETE',
@@ -279,8 +283,10 @@ $(document).ready(function () {
                         "progressBar": true
                     });
                 }
-                $('#deleteModal').modal('hide');
                 table.ajax.reload();
+            },
+            complete: function () {
+                $('#loadingOverlay').fadeOut(); 
             }
         });
     });

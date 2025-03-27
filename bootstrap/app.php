@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.expired' => \App\Http\Middleware\CheckExpired::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'jwt.auth' => \App\Http\Middleware\JwtAuthenticate::class,
+            'check.permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
 
         // Atau tambahkan middleware ke grup 'web'

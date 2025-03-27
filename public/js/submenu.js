@@ -31,12 +31,27 @@ $(document).ready(function() {
         $('#is_parent').val('');
         $('#submenusid').val('');
         $('#icon').val('');
+        loadUsers();
     
         // Pastikan elemen tampil sesuai kondisi awal
         $('#menu_id').closest('.mb-2').hide();
         $('#icon').closest('.mb-2').hide(); 
     
     });
+
+    function loadUsers(selectedType = '') {
+        $.get(routes.SuperadminRole, function(roles) { 
+            $('#type').empty();
+            $('#type').append('<option value="">Pilih Type</option>');
+    
+            roles.forEach(function(role) {
+                var selected = role.id == selectedType ? 'selected' : ''; // Cek apakah harus dipilih
+                $('#type').append(`<option value="${role.id}" ${selected}>${role.name}</option>`);
+            });
+        }).fail(function() {
+            alert('Gagal mengambil data role. Pastikan API berjalan dengan benar.');
+        });
+    }
     
 
     function loadMenus() {
@@ -112,6 +127,7 @@ $(document).ready(function() {
             $('#type').val(submenu.type);
             $('#is_parent').val(submenu.type_menu);
             $('#icon').val(submenu.icon);
+            loadUsers(submenu.type);
     
             var options = '<option value="">Pilih Menu Induk</option>';
             menus.forEach(function(menu) {

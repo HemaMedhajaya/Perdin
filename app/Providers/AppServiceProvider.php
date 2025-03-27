@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
             } elseif ($role === 2) {
                 $type = 2; 
             } elseif ($role === 3) {
-                $type = 0;
+                $type = 3;
             } elseif ($role === 4) {
                 $type = 4;
             }
